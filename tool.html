@@ -100,6 +100,8 @@
   .row-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
   button.ghost{background:none;border:1px dashed var(--line);color:var(--ink-soft);border-radius:2px;padding:7px 10px;font-size:12px;cursor:pointer;font-family:var(--font-ui);}
   button.ghost:hover{border-color:var(--copper);color:var(--copper);}
+  a.ghost{display:inline-block;text-decoration:none;}
+  a.ghost:hover{border-color:var(--copper);color:var(--copper);}
 
   .field{margin-bottom:10px;} .field label{display:block;font-size:11px;color:var(--ink-soft);margin-bottom:4px;}
   .field input, .field select{width:100%;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:2px;padding:7px 8px;font-size:12.5px;font-family:var(--font-ui);}
@@ -728,6 +730,7 @@ html,body{overflow-x:hidden!important;}
   <div class="source-toolbar">
     <button class="ghost" id="src-prev">‹ Previous</button>
     <button class="ghost" id="src-next">Next ›</button>
+    <a class="ghost" id="src-open-pdf" href="#" target="_blank" rel="noopener">Open Full Catalogue ↗</a>
     <span id="src-page-meta" class="source-meta"></span>
     <span id="src-search-status" class="source-search-status"></span>
   </div>
@@ -1768,8 +1771,10 @@ function renderDbBrands(){
     if(!info){ if(srcMeta)srcMeta.textContent='No source PDF configured'; return; }
     sourcePageIndex=Math.max(0,Math.min(sourcePageIndex,info.pages-1));
     const term=sourceSearchTerm?`&search=${encodeURIComponent(sourceSearchTerm)}`:'';
-    const url='pdfs/'+encodeURI(info.file)+'#page='+(sourcePageIndex+1)+'&view=FitH'+term;
+    const pdfPath='pdfs/'+encodeURI(info.file);
+    const url=pdfPath+'#page='+(sourcePageIndex+1)+'&view=FitH'+term;
     const frame=document.getElementById('db-source-pdf'); if(frame)frame.src=url;
+    const openPdf=document.getElementById('src-open-pdf'); if(openPdf){openPdf.href=pdfPath; openPdf.textContent=`Open ${dbBrand} Catalogue ↗`;}
     if(srcMeta)srcMeta.textContent=`${dbBrand} | original catalogue PDF | page ${sourcePageIndex+1} of ${info.pages}`;
     if(srcSearchStatus)srcSearchStatus.textContent=sourceSearchTerm?`Search: "${sourceSearchTerm}" | browser PDF search/highlight requested`:'';
   }
