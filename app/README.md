@@ -34,7 +34,7 @@ The npm scripts call each tool through `node` rather than npm's command shims, b
 ## Hosting
 
 - **Offline:** send `release/CableTrayDesign-v<version>.zip`. Users unzip it and open `CableTrayDesign.html`; the `pdfs` folder must stay next to it.
-- **Product website:** `npm run build:site` assembles the website, the app (at `app/`), the catalogues and the sample reports in `dist-site/`, the folder GitHub Pages serves. See `site/README.md`.
+- **Product website:** `npm run build:site` assembles the website, the app (at `app/`), the catalogues and the sample reports in `dist-site/`, the folder GitHub Pages serves. The App CI workflow publishes it on every push to `main` that passes all its checks, and when run by hand from the Actions tab; the repository's Settings, Pages, Source must be set to "GitHub Actions". See `site/README.md`.
 - **Web server or GitHub Pages, app only:** copy the contents of `dist/` to any folder. All paths are relative, so no server configuration is needed. The build copies the catalogue PDFs from `../pdfs` into `dist/pdfs`, where the catalog opens them.
 
 ## Layout

@@ -13,10 +13,13 @@ on:
       - 'pdfs/**'
       - 'tool.html'
       - '.github/workflows/app-ci.yml'
+  # Run by hand, for instance to publish the website right after GitHub Pages is switched on.
+  workflow_dispatch:
 
+# A newer push cancels a run in progress, except on main, where runs wait their turn so a deployment is never cut short.
 concurrency:
   group: app-ci-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   check:
@@ -50,6 +53,13 @@ jobs:
       - run: npm run verify:site
       - run: npm run test:site
 
+      # The website as GitHub Pages serves it, once every check above has passed; from main only.
+      - name: Upload website for GitHub Pages
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: app/dist-site
+
       - name: Upload single-file build
         uses: actions/upload-artifact@v7
         with:
@@ -64,3 +74,22 @@ jobs:
           path: |
             app/playwright-report
             app/playwright-report-site
+
+  # Publishes the website checked above to GitHub Pages. The repository's
+  # Settings, Pages, Source must be set to "GitHub Actions".
+  deploy:
+    needs: check
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
