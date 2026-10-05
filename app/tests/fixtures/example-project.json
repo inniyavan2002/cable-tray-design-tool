@@ -1,0 +1,156 @@
+{
+  "version": 1,
+  "name": "Example Project",
+  "details": {
+    "number": "EX-2026-014",
+    "client": "Example Client",
+    "preparedBy": "A. Engineer",
+    "checkedBy": "B. Checker",
+    "revision": "A",
+    "date": "2026-09-28"
+  },
+  "activeTrayId": "t1",
+  "standards": {
+    "widthsMm": [
+      50,
+      75,
+      100,
+      150,
+      200,
+      300,
+      450,
+      600,
+      750,
+      900,
+      1000
+    ],
+    "heightsMm": [
+      25,
+      50,
+      75,
+      100,
+      150,
+      200
+    ]
+  },
+  "clearanceOptions": [
+    0.3,
+    0.5,
+    1
+  ],
+  "trayDefaults": {
+    "layers": 1,
+    "spacing": 1,
+    "layerGap": true,
+    "clearanceFactor": 0.5,
+    "topClearancePct": 0,
+    "sparePct": 20,
+    "maxFillPct": 40,
+    "trayType": "perforated",
+    "fillMethod": "standard-area"
+  },
+  "trays": [
+    {
+      "id": "t1",
+      "name": "TR-01",
+      "service": "LV feeders",
+      "settings": {
+        "layers": 1,
+        "spacing": 1,
+        "layerGap": true,
+        "clearanceFactor": 0.5,
+        "topClearancePct": 0,
+        "sparePct": 20,
+        "maxFillPct": 40,
+        "trayType": "perforated",
+        "fillMethod": "standard-area"
+      },
+      "cables": [
+        {
+          "id": "a",
+          "kind": "catalog",
+          "catalogId": "doha-1873",
+          "quantity": 2
+        },
+        {
+          "id": "b",
+          "kind": "catalog",
+          "catalogId": "doha-1869",
+          "quantity": 3
+        },
+        {
+          "id": "c",
+          "kind": "catalog",
+          "catalogId": "doha-1866",
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "id": "t2",
+      "name": "TR-02",
+      "service": "Small power",
+      "settings": {
+        "layers": 2,
+        "spacing": 0,
+        "layerGap": false,
+        "clearanceFactor": 0.5,
+        "topClearancePct": 0,
+        "sparePct": 20,
+        "maxFillPct": 40,
+        "trayType": "perforated",
+        "fillMethod": "standard-area"
+      },
+      "cables": [
+        {
+          "id": "d",
+          "kind": "catalog",
+          "catalogId": "oman-100347",
+          "quantity": 12
+        },
+        {
+          "id": "e",
+          "kind": "catalog",
+          "catalogId": "oman-100337",
+          "quantity": 8
+        }
+      ]
+    },
+    {
+      "id": "t3",
+      "name": "TR-03",
+      "service": "Mixed",
+      "settings": {
+        "layers": 2,
+        "spacing": 0.5,
+        "layerGap": true,
+        "clearanceFactor": 0.5,
+        "topClearancePct": 0,
+        "sparePct": 20,
+        "maxFillPct": 40,
+        "trayType": "perforated",
+        "fillMethod": "standard-area"
+      },
+      "cables": [
+        {
+          "id": "f",
+          "kind": "catalog",
+          "catalogId": "doha-1873",
+          "quantity": 2
+        },
+        {
+          "id": "g",
+          "kind": "catalog",
+          "catalogId": "doha-1868",
+          "quantity": 4
+        },
+        {
+          "id": "h",
+          "kind": "catalog",
+          "catalogId": "doha-1866",
+          "quantity": 6
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+[
+  {
+    "id": "doha-1436",
+    "action": "correct",
+    "set": { "sizeMm2": 2.5 },
+    "note": "Catalogue text reads \"2 .5 rm\" and 7.41 ohm/km, the IEC 60228 value for 2.5 mm² copper.",
+    "by": "Import fix (catalogue text)",
+    "date": "2026-09-28"
+  },
+  {
+    "id": "doha-1444",
+    "action": "correct",
+    "set": { "sizeMm2": 2.5 },
+    "note": "Catalogue text reads \"2 .5 rm\" and 7.41 ohm/km, the IEC 60228 value for 2.5 mm² copper.",
+    "by": "Import fix (catalogue text)",
+    "date": "2026-09-28"
+  },
+  {
+    "id": "doha-1692",
+    "action": "correct",
+    "set": { "sizeMm2": 2.5 },
+    "note": "Catalogue text reads \"2 .5 rm\" and 7.41 ohm/km, the IEC 60228 value for 2.5 mm² copper.",
+    "by": "Import fix (catalogue text)",
+    "date": "2026-09-28"
+  },
+  {
+    "id": "doha-1700",
+    "action": "correct",
+    "set": { "sizeMm2": 2.5 },
+    "note": "Catalogue text reads \"2 .5 rm\" and 7.41 ohm/km, the IEC 60228 value for 2.5 mm² copper.",
+    "by": "Import fix (catalogue text)",
+    "date": "2026-09-28"
+  }
+]

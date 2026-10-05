@@ -1,0 +1,13 @@
+node_modules/
+dist/
+dist-single/
+dist-site/
+release/
+coverage/
+playwright-report/
+playwright-report-site/
+test-results/
+*.log
+reports/samples/
+reports/~$*
+reports/catalog-review *.xlsx

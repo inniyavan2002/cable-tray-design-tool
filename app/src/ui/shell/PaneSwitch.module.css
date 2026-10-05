@@ -1,0 +1,31 @@
+.switch {
+  display: flex;
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-1);
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.button {
+  flex: 1;
+  border: 0;
+  border-left: 1px solid var(--line-2);
+  background: transparent;
+  padding: 7px 10px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.button:first-child {
+  border-left: 0;
+}
+
+.button[aria-pressed='true'] {
+  background: var(--ink);
+  color: var(--bg);
+  font-weight: 600;
+}
+
+.button:focus-visible {
+  outline-offset: -2px;
+}

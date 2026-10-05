@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="description" content="Cable tray sizing, section drawing and reports. Runs entirely in your browser." />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M3 6v20h26V6' fill='none' stroke='%231B2A38' stroke-width='3'/%3E%3Ccircle cx='10' cy='20' r='4' fill='%23B5651D'/%3E%3Ccircle cx='19' cy='21' r='3' fill='%23B5651D'/%3E%3C/svg%3E" />
+    <title>Cable Tray Design</title>
+    <script>
+      // Apply a saved light/dark choice before the first paint to avoid a flash.
+      try {
+        var theme = localStorage.getItem('ctd.theme');
+        if (theme === 'light' || theme === 'dark') document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>This tool needs JavaScript. Please enable it in your browser.</noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

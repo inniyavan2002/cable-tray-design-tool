@@ -1,0 +1,132 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+.notice {
+  padding: var(--space-2) var(--space-4);
+  border-bottom: 1px solid var(--line-2);
+  background: var(--warn-bg);
+  color: var(--warn);
+  font-size: 12.5px;
+}
+
+/* Desktop, 1280 px and up: tray list | inputs | result. */
+.body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 212px minmax(360px, 430px) minmax(0, 1fr);
+  grid-template-areas: 'rail inputs result';
+  align-items: start;
+}
+
+.railArea {
+  grid-area: rail;
+  align-self: stretch;
+  min-width: 0;
+}
+
+.switchArea {
+  grid-area: switch;
+  display: none;
+}
+
+.compareArea {
+  grid-area: compare;
+  min-width: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .compareArea,
+  .inputs,
+  .result {
+    animation: global(fade-in) 0.2s ease-out;
+  }
+}
+
+/* Compare view: the tray list, then the comparison across the rest. */
+.body[data-view='compare'] {
+  grid-template-columns: 212px minmax(0, 1fr);
+  grid-template-rows: auto;
+  grid-template-areas: 'rail compare';
+}
+
+.inputs,
+.result {
+  display: grid;
+  align-content: start;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: var(--space-4);
+}
+
+.inputs {
+  grid-area: inputs;
+  align-self: stretch;
+  border-right: 1px solid var(--line-2);
+}
+
+.result {
+  grid-area: result;
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  padding: 10px var(--space-4);
+  padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--line-2);
+  color: var(--ink-3);
+  font: 12px var(--mono);
+}
+
+/* 1024–1279 px: tray list across the top, inputs and result side by side. */
+@media (max-width: 1279px) {
+  .body {
+    grid-template-columns: minmax(320px, 400px) minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      'rail rail'
+      'inputs result';
+  }
+}
+
+/* Under 1024 px: one column with an Inputs / Result switch. */
+@media (max-width: 1023px) {
+  .body {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto 1fr;
+    grid-template-areas:
+      'rail'
+      'switch'
+      'pane';
+  }
+
+  .switchArea {
+    display: block;
+    padding: var(--space-3) var(--space-4) 0;
+  }
+
+  .inputs,
+  .result {
+    grid-area: pane;
+    border-right: 0;
+  }
+
+  .body[data-pane='inputs'] .result,
+  .body[data-pane='result'] .inputs {
+    display: none;
+  }
+}
+
+@media (max-width: 1279px) {
+  .body[data-view='compare'] {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      'rail'
+      'compare';
+  }
+}

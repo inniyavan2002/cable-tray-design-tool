@@ -1,0 +1,1252 @@
+/*
+ * The product website: dark navy with one electric-blue accent. Cyan is kept
+ * for current flowing in the building drawing, and glass for the navigation
+ * and overlays. The site has one theme; the app keeps its own look.
+ */
+@import 'tailwindcss' source('.');
+@import '../src/styles/fonts.css';
+
+/*
+ * Motion follows <html data-motion>: "on" or "off", set by components/loop.tsx
+ * from the device's reduced-motion setting or the reader's own choice (the
+ * Play / Pause animation button). Tailwind's motion-safe variant follows it
+ * too, so the reader's choice wins over the device's.
+ */
+@custom-variant motion-safe (&:where([data-motion='on'], [data-motion='on'] *));
+
+:root {
+  color-scheme: dark;
+
+  --bg: #060d19;
+  --bg-2: #081324;
+  --surface: #0c1829;
+  --surface-2: #112038;
+  --ink: #e7edf6;
+  --ink-2: #a8b6c9;
+  /* 5.1:1 or better on every ground above. */
+  --ink-3: #8596ae;
+  --line: #16243a;
+  --line-2: #22344f;
+  /* Form controls: 3:1 against the surface they sit on. */
+  --line-3: #52698c;
+  --accent: #3d8bff;
+  /* Button fill: white text on it is 5.2:1. */
+  --accent-strong: #2563eb;
+  --accent-ink: #7cb0ff;
+  --accent-soft: #0f2447;
+  /* Current flowing in the building drawing, and nothing else. */
+  --energy: #3ee0ff;
+
+  --pass: #5fdc9b;
+  --pass-bg: #0e2a22;
+  --warn: #f2bf5e;
+  --warn-bg: #2a2210;
+  --fail: #ff8f85;
+  --fail-bg: #321719;
+
+  /* The app's section drawing, in its dark colours. */
+  --cab-1: #d08a48;
+  --cab-2: #63a1c4;
+  --cab-3: #86b470;
+  --cab-4: #b48ac8;
+  --cab-5: #5cbfb8;
+  --cab-6: #d8b14e;
+  --cab-7: #93a3b3;
+  --cab-8: #d98397;
+  --cab-9: #aab85a;
+  --cab-10: #8594e0;
+  --cab-11: #c98a68;
+  --cab-12: #6cc0e0;
+  --cab-stroke: #050a12;
+  --cab-tag: #050a12;
+  --zone-spare: rgba(61, 139, 255, 0.16);
+  --hatch: #4f6384;
+  --req-line: #f2bf5e;
+  --grid-line: rgba(124, 176, 255, 0.06);
+  --grid-major: rgba(124, 176, 255, 0.11);
+
+  --sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --cond: 'IBM Plex Sans Condensed', 'IBM Plex Sans', 'Arial Narrow', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-2: var(--bg-2);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
+  --color-line-2: var(--line-2);
+  --color-line-3: var(--line-3);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-energy: var(--energy);
+  --color-pass: var(--pass);
+  --color-pass-bg: var(--pass-bg);
+  --color-warn: var(--warn);
+  --color-warn-bg: var(--warn-bg);
+  --color-fail: var(--fail);
+  --color-fail-bg: var(--fail-bg);
+  --font-sans: var(--sans);
+  --font-mono: var(--mono);
+  --font-cond: var(--cond);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 84px;
+  }
+
+  html[data-motion='on'] {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.6 var(--sans);
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Links in text stay underlined, so they are not told apart by colour alone. */
+  a {
+    color: var(--accent-ink);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent-ink);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: rgba(61, 139, 255, 0.35);
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+}
+
+@layer components {
+  .section-title {
+    font: 600 clamp(30px, 4vw, 44px) / 1.08 var(--cond);
+    letter-spacing: -0.012em;
+  }
+
+  /* Frosted glass, for the navigation and overlays only. */
+  .glass {
+    background: rgba(8, 17, 32, 0.72);
+    /* The build adds the -webkit- prefix; writing both makes it drop this one. */
+    backdrop-filter: blur(18px) saturate(150%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    .glass {
+      background: var(--surface);
+      backdrop-filter: none;
+    }
+  }
+
+  /* The drawing-sheet grid behind the hero and the showcase. */
+  .sheet-grid {
+    background-image:
+      linear-gradient(var(--grid-major) 1px, transparent 1px), linear-gradient(90deg, var(--grid-major) 1px, transparent 1px),
+      linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size:
+      140px 140px,
+      140px 140px,
+      28px 28px,
+      28px 28px;
+    mask-image: radial-gradient(ellipse 70% 60% at 60% 45%, #000 30%, transparent 100%);
+  }
+}
+
+/*
+ * The building drawing (components/building). Each system is a group with
+ * data-sys; a view sets how strongly each one shows, and the change fades.
+ * Only the hover areas and the shown labels take the pointer; the drawing's
+ * lines let it through.
+ */
+.bldg {
+  pointer-events: none;
+  --b-line: rgba(150, 186, 240, 0.5);
+  --b-soft: rgba(150, 186, 240, 0.2);
+  --b-faint: rgba(150, 186, 240, 0.09);
+  --b-tray: #6fa4f0;
+  --o-ground: 1;
+  --o-arch: 0.85;
+  --o-facade: 0.5;
+  --o-trays: 0.85;
+  --o-hl: 0.9;
+  --o-conduits: 0.5;
+  --o-boards: 0.9;
+  --o-feeders: 1;
+  --o-circuits: 0.9;
+  --o-lcircuits: 0.7;
+  --o-fire: 0.85;
+  --o-lights: 0.6;
+  --o-cones: 0.25;
+  --o-levels: 0;
+  --o-joints: 1;
+  --o-riserflow: 1;
+  --o-particles: 1;
+  --o-scan: 1;
+  --o-measure: 1;
+  /* How strongly the systems show while a part is hovered (data-focus): the part and its label stay lit. */
+  --dim: 1;
+}
+.bldg[data-focus] {
+  --dim: 0.55;
+}
+
+.bldg[data-view='architecture'] {
+  --o-arch: 1;
+  --o-facade: 1;
+  --o-trays: 0.12;
+  --o-hl: 0;
+  --o-conduits: 0.08;
+  --o-boards: 0.15;
+  --o-feeders: 0;
+  --o-circuits: 0;
+  --o-lcircuits: 0;
+  --o-fire: 0.1;
+  --o-lights: 0.15;
+  --o-cones: 0;
+  --o-levels: 1;
+  --o-joints: 0;
+  --o-riserflow: 0;
+  --o-particles: 0;
+  --o-scan: 0;
+  --o-measure: 0;
+}
+
+.bldg[data-view='trays'] {
+  --o-arch: 0.4;
+  --o-facade: 0.15;
+  --o-trays: 1;
+  --o-hl: 1;
+  --o-conduits: 0.9;
+  --o-boards: 0.35;
+  --o-feeders: 0;
+  --o-circuits: 0.9;
+  --o-lcircuits: 0;
+  --o-fire: 0.12;
+  --o-lights: 0.2;
+  --o-cones: 0;
+  --o-joints: 0.8;
+  --o-particles: 0.7;
+}
+
+.bldg[data-view='power'] {
+  --o-arch: 0.4;
+  --o-facade: 0.15;
+  --o-trays: 0.3;
+  --o-hl: 0;
+  --o-conduits: 0.15;
+  --o-boards: 1;
+  --o-feeders: 1;
+  --o-circuits: 1;
+  --o-lcircuits: 0;
+  --o-fire: 0.12;
+  --o-lights: 0.2;
+  --o-cones: 0;
+  --o-scan: 0.4;
+  --o-measure: 0.5;
+}
+
+.bldg[data-view='lighting'] {
+  --o-arch: 0.4;
+  --o-facade: 0.15;
+  --o-trays: 0.3;
+  --o-hl: 0;
+  --o-conduits: 1;
+  --o-boards: 0.35;
+  --o-feeders: 0;
+  --o-circuits: 0;
+  --o-lcircuits: 1;
+  --o-fire: 0.12;
+  --o-lights: 1;
+  --o-cones: 1;
+  --o-joints: 0.25;
+  --o-riserflow: 0;
+  --o-particles: 0;
+  --o-scan: 0;
+  --o-measure: 0;
+}
+
+.bldg[data-view='fire'] {
+  --o-arch: 0.4;
+  --o-facade: 0.15;
+  --o-trays: 0.2;
+  --o-hl: 0;
+  --o-conduits: 0.1;
+  --o-boards: 0.25;
+  --o-feeders: 0;
+  --o-circuits: 0;
+  --o-lcircuits: 0;
+  --o-fire: 1;
+  --o-lights: 0.15;
+  --o-cones: 0;
+  --o-joints: 0.15;
+  --o-riserflow: 0;
+  --o-particles: 0;
+  --o-scan: 0;
+  --o-measure: 0;
+}
+
+.bldg [data-sys] {
+  transition: opacity 500ms var(--ease);
+}
+.bldg [data-sys='ground'] {
+  opacity: calc(var(--o-ground) * var(--dim));
+}
+.bldg [data-sys='arch'] {
+  opacity: calc(var(--o-arch) * var(--dim));
+}
+.bldg [data-sys='facade'] {
+  opacity: calc(var(--o-facade) * var(--dim));
+}
+.bldg [data-sys='trays'] {
+  opacity: calc(var(--o-trays) * var(--dim));
+}
+.bldg [data-sys='hl'] {
+  opacity: calc(var(--o-hl) * var(--dim));
+}
+.bldg [data-sys='conduits'] {
+  opacity: calc(var(--o-conduits) * var(--dim));
+}
+.bldg [data-sys='boards'] {
+  opacity: calc(var(--o-boards) * var(--dim));
+}
+.bldg [data-sys='feeders'] {
+  opacity: calc(var(--o-feeders) * var(--dim));
+}
+.bldg [data-sys='circuits'] {
+  opacity: calc(var(--o-circuits) * var(--dim));
+}
+.bldg [data-sys='lcircuits'] {
+  opacity: calc(var(--o-lcircuits) * var(--dim));
+}
+.bldg [data-sys='fire'] {
+  opacity: calc(var(--o-fire) * var(--dim));
+}
+.bldg [data-sys='lights'] {
+  opacity: calc(var(--o-lights) * var(--dim));
+}
+.bldg [data-sys='cones'] {
+  opacity: calc(var(--o-cones) * var(--dim));
+}
+.bldg [data-sys='levels'] {
+  opacity: calc(var(--o-levels) * var(--dim));
+}
+.bldg [data-sys='joints'] {
+  opacity: calc(var(--o-joints) * var(--dim));
+}
+.bldg [data-sys='riserflow'] {
+  opacity: calc(var(--o-riserflow) * var(--dim));
+}
+.bldg [data-sys='particles'] {
+  opacity: calc(var(--o-particles) * var(--dim));
+}
+.bldg [data-sys='scan'] {
+  opacity: calc(var(--o-scan) * var(--dim));
+}
+.bldg [data-sys='measure'] {
+  opacity: calc(var(--o-measure) * 0.85 * var(--dim));
+}
+
+/* A label shows in the views its data-show lists, and whenever the part it names is hovered. */
+.bldg [data-sys='label'] {
+  opacity: 0;
+  pointer-events: none;
+}
+.bldg[data-view='all'] [data-show~='all'],
+.bldg[data-view='architecture'] [data-show~='architecture'],
+.bldg[data-view='trays'] [data-show~='trays'],
+.bldg[data-view='power'] [data-show~='power'],
+.bldg[data-view='lighting'] [data-show~='lighting'],
+.bldg[data-view='fire'] [data-show~='fire'],
+.bldg [data-sys='label'][data-on] {
+  opacity: 1;
+  pointer-events: auto;
+}
+.b-leader {
+  stroke: var(--accent-ink);
+  stroke-opacity: 0.55;
+  transition:
+    stroke 250ms var(--ease),
+    stroke-opacity 250ms var(--ease);
+}
+.b-label-box {
+  fill: rgba(8, 17, 32, 0.88);
+  stroke: rgba(124, 176, 255, 0.38);
+  transition:
+    stroke 250ms var(--ease),
+    fill 250ms var(--ease);
+}
+[data-sys='label'][data-on] .b-leader {
+  stroke: var(--energy);
+  stroke-opacity: 1;
+}
+[data-sys='label'][data-on] .b-label-box {
+  fill: rgba(10, 30, 56, 0.96);
+  stroke: var(--energy);
+}
+
+/* The part a label names, lit while it or its label is hovered. */
+.b-target {
+  fill: none;
+  stroke: var(--energy);
+  stroke-width: 2.2;
+  stroke-linejoin: round;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 250ms var(--ease);
+}
+.b-target[data-kind='board'] {
+  fill: rgba(62, 224, 255, 0.14);
+}
+.b-target[data-kind='lights'] {
+  stroke-width: 1.4;
+}
+.b-target[data-on] {
+  opacity: 1;
+  filter: drop-shadow(0 0 3px rgba(62, 224, 255, 0.8));
+}
+
+/* The part's figures under its label, while hovered. */
+.b-spec {
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+  transition:
+    opacity 250ms var(--ease),
+    transform 250ms var(--ease);
+}
+[data-sys='label'][data-on] .b-spec {
+  opacity: 1;
+  transform: none;
+}
+.b-spec-box {
+  fill: rgba(6, 16, 30, 0.96);
+  stroke: rgba(62, 224, 255, 0.55);
+}
+/* The hovered part's outline runs like a selection in a model viewer; it only moves while the drawing runs. */
+.b-select {
+  fill: none;
+  stroke: #e6fbff;
+  stroke-width: 1;
+  stroke-dasharray: 3 9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 250ms var(--ease);
+}
+.b-select[data-on] {
+  opacity: 0.85;
+}
+[data-flow='on'] .b-select[data-on] {
+  animation: b-select 1.4s linear infinite;
+}
+
+/* A tray's fill against its limit, in its label. */
+.b-meter-room {
+  fill: rgba(124, 176, 255, 0.2);
+}
+.b-meter-past {
+  fill: rgba(124, 176, 255, 0.07);
+}
+.b-meter-fill {
+  fill: var(--pass);
+  transform-box: fill-box;
+  transform-origin: 0 50%;
+  animation: b-meter 9s infinite paused;
+}
+.b-meter-limit {
+  stroke: var(--ink-2);
+  stroke-width: 1;
+}
+.b-hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 12;
+  pointer-events: stroke;
+}
+.b-hit[data-kind='board'] {
+  fill: transparent;
+  pointer-events: all;
+}
+
+/*
+ * The drawing's loops: each one shows something the system does. They are
+ * paused until [data-flow='on'] (on screen, not paused by the reader, motion
+ * allowed), and never run under reduced motion.
+ */
+
+/* Current: dashes that run along each path from its source. The pattern is 16 long, so moving 32 loops seamlessly. */
+.b-flow {
+  stroke: var(--energy);
+  stroke-dasharray: 3 13;
+  stroke-linecap: round;
+  animation:
+    b-flow 1.3s linear infinite paused,
+    b-intensity 4.3s ease-in-out infinite alternate paused;
+  /* Each level and system sets its own pace (Building.tsx), so the network never pulses in step. */
+  animation-duration: var(--flow-d, 1.3s), var(--intensity-d, 4.3s);
+}
+/* Lighting: longer, steadier dashes. Fire alarm: a double blip, like a loop being polled. Both patterns divide 32, so they loop seamlessly. */
+.b-flow[data-tone='lighting'] {
+  stroke: var(--warn);
+  stroke-dasharray: 6 10;
+}
+.b-flow[data-tone='fire'] {
+  stroke: var(--fail);
+  stroke-dasharray: 2 5 2 23;
+}
+/* Packets along the supply and the feeders. */
+.b-pulse {
+  stroke: #d8f8ff;
+  stroke-dasharray: 1.5 46.5;
+  stroke-linecap: round;
+  animation:
+    b-pulse 2.6s linear infinite paused,
+    b-intensity 3.1s ease-in-out infinite alternate paused;
+  animation-duration: var(--pulse-d, 2.6s), calc(var(--intensity-d, 4.3s) * 0.7);
+}
+/* Light running up the riser, at a steady speed so the level joints can light as it passes them (RISER_PULSE in geometry.ts). */
+.b-riser {
+  stroke: #aee9ff;
+  stroke-dasharray: 38 420;
+  animation: b-riser 2.8s linear infinite paused;
+}
+.b-riser-glow {
+  stroke: var(--accent);
+  stroke-opacity: 0.35;
+}
+/* A level's joint on the riser, lit as the riser's light reaches it. */
+.b-junction {
+  fill: var(--energy);
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: b-junction 2.8s linear infinite backwards paused;
+}
+/* The main board's indicator lights and the status dot on its label. */
+.b-led,
+.b-status-dot {
+  animation: b-led 1.5s ease-in-out infinite alternate paused;
+}
+.b-status-dot {
+  animation-duration: 1.2s;
+}
+/* The scan: a bright band along a tray's centre line while its rails light, and its label answers. */
+.b-scan-band {
+  fill: none;
+  stroke: #e6fbff;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-dasharray: 0.16 1.4;
+  stroke-dashoffset: 0.16;
+  opacity: 0;
+  animation: b-scan-band 9s linear infinite backwards paused;
+}
+.b-scan-lit {
+  fill: none;
+  stroke: var(--energy);
+  stroke-width: 1.6;
+  opacity: 0;
+  animation: b-scan-lit 9s ease-in-out infinite backwards paused;
+}
+.b-label-scan {
+  animation: b-label-scan 9s ease-in-out infinite paused;
+}
+/*
+ * Before each scan, the tray's circuit lights from the main board with a
+ * bright head running ahead, arriving as the scan starts (TRACE_LEAD in
+ * geometry.ts: 1.1 s of the 9 s cycle), then fades while the scan runs.
+ * Paths are 1 long (pathLength); a 1 2 pattern hides the line at offset 1.
+ */
+.b-trace {
+  fill: none;
+  stroke: var(--energy);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  stroke-dasharray: 1 2;
+  stroke-dashoffset: 1;
+  opacity: 0;
+  animation: b-trace 9s infinite paused;
+}
+.b-trace-glow {
+  stroke-width: 6;
+  stroke-opacity: 0.22;
+}
+.b-trace-head {
+  fill: none;
+  stroke: #e6fbff;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-dasharray: 0.015 2;
+  stroke-dashoffset: 0.015;
+  opacity: 0;
+  animation: b-trace-head 9s infinite paused;
+}
+/* Connection points: now and then a ring grows and fades. */
+.b-ping {
+  fill: none;
+  stroke: var(--energy);
+  stroke-width: 1;
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  animation: b-ping 6s var(--ease) infinite paused;
+}
+/* The main board's soft blue glow. */
+.b-glow {
+  opacity: 0.15;
+  filter: blur(4px);
+  animation: b-glow 3.6s ease-in-out infinite alternate paused;
+}
+
+/* The hero around the drawing. */
+/* The grid lit around the mouse; the mask follows the pointer (Hero.tsx). */
+.grid-spot {
+  background-image:
+    linear-gradient(rgba(124, 190, 255, 0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(124, 190, 255, 0.5) 1px, transparent 1px),
+    linear-gradient(rgba(124, 190, 255, 0.18) 1px, transparent 1px), linear-gradient(90deg, rgba(124, 190, 255, 0.18) 1px, transparent 1px);
+  background-size:
+    140px 140px,
+    140px 140px,
+    28px 28px,
+    28px 28px;
+}
+/* A still glow behind the model. */
+.tray-glow {
+  background: radial-gradient(closest-side, rgba(37, 99, 235, 0.22), rgba(62, 224, 255, 0.04) 60%, transparent);
+}
+/*
+ * The model sways very slowly, as if seen live in a 3D viewer: it turns about
+ * a degree and a half each way, and rises, settles and tips a little on a
+ * period of its own, so the two never fall into step.
+ */
+.hero-orbit {
+  animation: hero-orbit 23s ease-in-out infinite alternate paused;
+}
+.hero-float {
+  animation: hero-float 13s ease-in-out infinite alternate paused;
+}
+/* A faint scan passes down the drawing sheet every 8 s. */
+.grid-scan {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 140px;
+  background: linear-gradient(180deg, transparent, rgba(62, 224, 255, 0.03) 44%, rgba(124, 190, 255, 0.16) 50%, rgba(62, 224, 255, 0.03) 56%, transparent);
+  transform: translateY(-150px);
+  animation: grid-scan 8s cubic-bezier(0.45, 0, 0.3, 1) 2.5s infinite backwards paused;
+}
+/*
+ * The live network behind the hero (components/network): part of the drawing
+ * sheet, so it stays faint, below the text and the drawing, and fades out
+ * towards the sheet's edges as the grid does. It is aria-hidden decoration,
+ * so its text is exempt from the contrast rule.
+ */
+.net {
+  pointer-events: none;
+}
+/* Each circuit is stroked with its system's colour fading towards the edges (Network.tsx): a mask would cost a repaint of the whole sheet every frame. */
+.net-trace {
+  fill: none;
+  stroke-width: 1;
+  stroke-linejoin: round;
+}
+.net-trace[data-tone='power'] {
+  stroke-opacity: 0.2;
+}
+.net-trace[data-tone='lighting'] {
+  stroke-opacity: 0.15;
+}
+.net-trace[data-tone='fire'] {
+  stroke-opacity: 0.15;
+}
+.net-node {
+  opacity: 0.55;
+}
+.net-detector {
+  fill: #2c0f12;
+  stroke: var(--fail);
+  stroke-opacity: 0.5;
+}
+.net-dim {
+  fill: none;
+  stroke: var(--accent-ink);
+  stroke-opacity: 0.35;
+}
+.net text {
+  font: 9.5px var(--mono);
+  letter-spacing: 0.08em;
+  fill: var(--ink-3);
+  stroke: none;
+}
+.net-dim text {
+  font-size: 9px;
+  fill: var(--accent-ink);
+  fill-opacity: 0.5;
+}
+.net-tag {
+  opacity: 0.7;
+}
+.net-tag[data-kind='status'] text {
+  fill: var(--energy);
+  fill-opacity: 0.75;
+}
+/* What moves on the network: HTML marks animated by transform and opacity alone, so nothing is repainted (Network.tsx). */
+.net-pulse,
+.net-ring,
+.net-led {
+  position: absolute;
+  pointer-events: none;
+}
+.net-pulse[data-tone='power'] {
+  --tone: var(--energy);
+  --core: #e6fbff;
+}
+.net-pulse[data-tone='lighting'] {
+  --tone: var(--warn);
+  --core: #fff1c9;
+}
+.net-pulse[data-tone='fire'] {
+  --tone: var(--fail);
+  --core: #ffd9d4;
+}
+/* A pulse with its tail behind it; it turns about its head, which sits on the point it is at. */
+.net-pulse {
+  margin: -1.5px 0 0 -16px;
+  width: 16px;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--tone) 60%, transparent));
+  transform-origin: 16px 1.5px;
+  opacity: 0;
+}
+.net-pulse::after {
+  content: '';
+  position: absolute;
+  top: -0.5px;
+  right: -2px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--core);
+  box-shadow: 0 0 0 2.5px color-mix(in srgb, var(--tone) 16%, transparent);
+}
+/* A connection point's ring, growing and fading now and then. */
+.net-ring {
+  margin: -2.5px 0 0 -2.5px;
+  width: 5px;
+  height: 5px;
+  border: 1px solid var(--energy);
+  border-radius: 50%;
+  opacity: 0;
+  animation: net-ring 7s var(--ease) infinite paused;
+}
+.net-ring[data-tone='lighting'] {
+  border-color: var(--warn);
+}
+.net-ring[data-tone='fire'] {
+  border-color: var(--fail);
+}
+.net-led {
+  margin: -2px 0 0 -2px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--energy);
+  animation: b-led 1.5s ease-in-out infinite alternate paused;
+}
+.net-leader {
+  fill: none;
+  stroke: var(--ink-3);
+  stroke-opacity: 0.45;
+  stroke-dasharray: 2 3;
+}
+.net-readout {
+  opacity: 0.75;
+}
+.net-readout .net-key-strong {
+  fill: var(--ink-2);
+  font-weight: 600;
+}
+.net-readout .net-value {
+  fill: var(--ink-2);
+}
+.net-scale {
+  fill: rgba(124, 176, 255, 0.18);
+}
+.net-scale-fill {
+  fill: var(--pass);
+  fill-opacity: 0.8;
+}
+.net-scale-limit {
+  fill: var(--ink-3);
+  stroke: var(--ink-3);
+  stroke-width: 1;
+}
+.net .net-caption {
+  font-size: 8.5px;
+}
+/* The live badge's dot. */
+.live-dot {
+  animation: live-dot 1.8s ease-in-out infinite paused;
+}
+/*
+ * The features' workflow (Features.tsx): the drawing sheet drifts slowly
+ * the way the work flows, by transform alone; the stage running is lit; a
+ * stage's hover reveals a little more of its working; and the wires light
+ * as each stage passes its result on.
+ */
+.fw-grid {
+  background-image:
+    linear-gradient(var(--grid-major) 1px, transparent 1px), linear-gradient(90deg, var(--grid-major) 1px, transparent 1px),
+    linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size:
+    140px 140px,
+    140px 140px,
+    28px 28px,
+    28px 28px;
+  animation: fw-drift 40s linear infinite paused;
+}
+.fw-led {
+  animation: b-led 1.2s ease-in-out infinite alternate paused;
+}
+.fw-stage[data-state='running'] {
+  border-color: rgba(62, 224, 255, 0.45);
+  box-shadow:
+    0 0 0 1px rgba(62, 224, 255, 0.12),
+    0 18px 40px -24px rgba(62, 224, 255, 0.5);
+}
+.fw-viz > svg {
+  transition: opacity 500ms var(--ease);
+}
+.fw-stage[data-state='queued'] .fw-viz > svg {
+  opacity: 0.45;
+}
+.fw-hover {
+  opacity: 0;
+  transition: opacity 300ms var(--ease);
+}
+.group:hover .fw-hover,
+.group:focus-within .fw-hover {
+  opacity: 1;
+}
+.fw-wire {
+  fill: none;
+  stroke: var(--line-3);
+  stroke-opacity: 0.55;
+}
+/* A wire's light is one dash as long as the wire (pathLength 1), drawn in from its start as the result passes. */
+.fw-wire-lit {
+  fill: none;
+  stroke: var(--energy);
+  stroke-width: 1.5;
+  stroke-dasharray: 1 2;
+  stroke-dashoffset: 1;
+  opacity: 0.85;
+}
+.fw-wire-lit[data-lit] {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 700ms cubic-bezier(0.45, 0, 0.2, 1);
+}
+.fw-port {
+  fill: var(--bg);
+  stroke: var(--line-3);
+}
+.fw-port[data-lit] {
+  fill: var(--energy);
+  stroke: var(--energy);
+}
+.fw-spark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 50%;
+  background: #e6fbff;
+  box-shadow:
+    0 0 0 3px rgba(62, 224, 255, 0.25),
+    0 0 14px 3px rgba(62, 224, 255, 0.6);
+  pointer-events: none;
+}
+/* Workflow and calculation steps: light runs along the lit line from step to step. */
+.wf-pulse {
+  animation: wf-pulse 4.2s cubic-bezier(0.45, 0, 0.3, 1) infinite paused;
+}
+
+[data-flow='on'] .b-flow,
+[data-flow='on'] .b-pulse,
+[data-flow='on'] .b-riser,
+[data-flow='on'] .b-junction,
+[data-flow='on'] .b-led,
+[data-flow='on'] .b-status-dot,
+[data-flow='on'] .b-scan-band,
+[data-flow='on'] .b-scan-lit,
+[data-flow='on'] .b-label-scan,
+[data-flow='on'] .b-trace,
+[data-flow='on'] .b-trace-head,
+[data-flow='on'] .b-meter-fill,
+[data-flow='on'] .b-ping,
+[data-flow='on'] .b-glow,
+[data-flow='on'] .hero-orbit,
+[data-flow='on'] .net-ring,
+[data-flow='on'] .net-led,
+[data-flow='on'] .fw-grid,
+[data-flow='on'] .fw-led,
+[data-flow='on'] .hero-float,
+[data-flow='on'] .grid-scan,
+[data-flow='on'] .live-dot,
+[data-flow='on'] .wf-pulse {
+  animation-play-state: running;
+}
+
+/* Current in a system the view has faded out does not run. */
+.b-flow[data-still],
+.b-pulse[data-still],
+.b-riser[data-still],
+.b-junction[data-still] {
+  animation: none;
+}
+.b-riser[data-still] {
+  opacity: 0;
+}
+
+@keyframes b-flow {
+  to {
+    stroke-dashoffset: -32;
+  }
+}
+@keyframes b-pulse {
+  to {
+    stroke-dashoffset: -96;
+  }
+}
+@keyframes b-riser {
+  from {
+    stroke-dashoffset: 38;
+  }
+  to {
+    stroke-dashoffset: -420;
+  }
+}
+@keyframes b-intensity {
+  from {
+    opacity: 0.6;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes b-junction {
+  0% {
+    opacity: 0.9;
+    transform: scale(2);
+  }
+  25%,
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+@keyframes b-led {
+  from {
+    opacity: 0.3;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes b-scan-band {
+  0% {
+    stroke-dashoffset: 0.16;
+    opacity: 0;
+  }
+  2% {
+    opacity: 0.9;
+  }
+  22% {
+    stroke-dashoffset: -1;
+    opacity: 0.9;
+  }
+  24%,
+  100% {
+    stroke-dashoffset: -1;
+    opacity: 0;
+  }
+}
+@keyframes b-scan-lit {
+  0% {
+    opacity: 0;
+  }
+  4%,
+  22% {
+    opacity: 0.75;
+  }
+  30%,
+  100% {
+    opacity: 0;
+  }
+}
+/* Only the lit window is given, so hovering still recolours the label the rest of the time. */
+@keyframes b-label-scan {
+  5%,
+  22% {
+    stroke: var(--energy);
+  }
+}
+@keyframes b-trace {
+  0% {
+    stroke-dashoffset: 1;
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.45, 0, 0.2, 1);
+  }
+  12.2% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+    animation-timing-function: ease-in-out;
+  }
+  30% {
+    stroke-dashoffset: 0;
+    opacity: 0.6;
+  }
+  38%,
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+@keyframes b-trace-head {
+  0% {
+    stroke-dashoffset: 0.015;
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.45, 0, 0.2, 1);
+  }
+  12.2% {
+    stroke-dashoffset: -0.985;
+    opacity: 1;
+  }
+  15%,
+  100% {
+    stroke-dashoffset: -0.985;
+    opacity: 0;
+  }
+}
+/* The fill empties as the scan reaches the tray, then measures up to the app's figure while the scan runs along it. */
+@keyframes b-meter {
+  0% {
+    transform: scaleX(1);
+    animation-timing-function: ease-in;
+  }
+  3% {
+    transform: scaleX(0);
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  22%,
+  100% {
+    transform: scaleX(1);
+  }
+}
+@keyframes fw-drift {
+  to {
+    transform: translateX(140px);
+  }
+}
+@keyframes net-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  20%,
+  100% {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+}
+@keyframes b-select {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+@keyframes b-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  22%,
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+@keyframes b-glow {
+  to {
+    opacity: 0.4;
+  }
+}
+@keyframes hero-orbit {
+  from {
+    transform: perspective(1600px) rotateY(-1.5deg);
+  }
+  to {
+    transform: perspective(1600px) rotateY(1.5deg);
+  }
+}
+@keyframes hero-float {
+  from {
+    transform: perspective(1600px) translateY(3px) rotateX(0.7deg);
+  }
+  to {
+    transform: perspective(1600px) translateY(-5px) rotateX(-0.7deg);
+  }
+}
+@keyframes grid-scan {
+  0% {
+    transform: translateY(-150px);
+  }
+  40%,
+  100% {
+    transform: translateY(calc(100vh + 20px));
+  }
+}
+@keyframes live-dot {
+  50% {
+    opacity: 0.35;
+    box-shadow: 0 0 0 4px rgba(62, 224, 255, 0);
+  }
+}
+@keyframes wf-pulse {
+  from {
+    transform: translateX(-10%);
+    opacity: 0;
+  }
+  10%,
+  85% {
+    opacity: 1;
+  }
+  to {
+    transform: translateX(1000%);
+    opacity: 0;
+  }
+}
+
+/* A light that sweeps across a primary button on each hover. */
+.btn-sweep {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.24) 50%, transparent 70%);
+  transform: translateX(-130%);
+}
+.group:hover .btn-sweep,
+.group:focus-visible .btn-sweep {
+  transform: translateX(130%);
+  transition: transform 600ms var(--ease);
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.985);
+  }
+}
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+.lightbox[open] {
+  animation: dialog-in 320ms var(--ease);
+}
+.lightbox[open]::backdrop {
+  background: rgba(3, 8, 16, 0.72);
+  backdrop-filter: blur(6px);
+  animation: backdrop-in 240ms ease-out;
+}
+
+/* Too small to read on a phone. */
+@media (max-width: 639px) {
+  .bldg-hero [data-sys='label'] {
+    display: none;
+  }
+}
+
+/* Phones and small tablets keep the current flowing and drop the rest. */
+@media (max-width: 767px) {
+  .hero-orbit,
+  .hero-float {
+    animation: none;
+  }
+  .grid-scan {
+    display: none;
+  }
+  .b-particle:nth-child(n + 7) {
+    display: none;
+  }
+}
+
+/* The header over a scrolled page falls back to a solid bar when the device asks for less transparency. */
+@media (prefers-reduced-transparency: reduce) {
+  .site-header[data-scrolled] {
+    background-color: var(--surface) !important;
+    backdrop-filter: none !important;
+  }
+}
+
+/* Still: nothing moves (the device asks for reduced motion and the reader has not chosen otherwise, or the reader paused). */
+:root[data-motion='off'] :is(
+    .b-flow,
+    .b-pulse,
+    .b-riser,
+    .b-junction,
+    .b-led,
+    .b-status-dot,
+    .b-scan-band,
+    .b-scan-lit,
+    .b-label-scan,
+    .b-trace,
+    .b-trace-head,
+    .b-meter-fill,
+    .b-select,
+    .b-ping,
+    .b-glow,
+    .hero-orbit,
+    .hero-float,
+    .net-ring,
+    .net-led,
+    .fw-grid,
+    .fw-led,
+    .grid-scan,
+    .live-dot,
+    .wf-pulse,
+    .lightbox[open]
+  ),
+:root[data-motion='off'] .lightbox[open]::backdrop {
+  animation: none;
+}
+:root[data-motion='off'] :is(.btn-sweep, .wf-pulse, .b-riser, .grid-scan) {
+  display: none;
+}
+:root[data-motion='off'] :is(.bldg [data-sys], .b-target, .b-leader, .b-label-box, .b-spec, .fw-viz > svg, .fw-hover, .fw-wire-lit) {
+  transition: none;
+}

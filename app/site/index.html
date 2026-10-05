@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Cable Tray Design · tray sizing from catalogue data</title>
+    <meta
+      name="description"
+      content="Size cable trays from {{rows}} catalogue rows from {{manufacturers}} manufacturers: the smallest standard tray that fits and meets your fill limit, a section drawn to scale, the full calculation, and PDF and Excel reports. Runs in your browser."
+    />
+    <meta name="theme-color" content="#060D19" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href="{{siteUrl}}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Cable Tray Design" />
+    <meta property="og:description" content="Size cable trays from manufacturers' catalogue data, and show the working." />
+    <meta property="og:url" content="{{siteUrl}}" />
+    <meta property="og:image" content="{{siteUrl}}og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="module" src="./main.tsx"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>
+      <div style="max-width: 44rem; margin: 0 auto; padding: 40px 16px; font: 16px/1.6 system-ui, sans-serif">
+        <h1 style="font-size: 28px; line-height: 1.2">Cable Tray Design</h1>
+        <p>
+          Size cable trays from {{rows}} catalogue rows from {{manufacturers}} manufacturers: the smallest standard tray that fits and meets your fill limit,
+          a section drawn to scale, the full calculation, and PDF and Excel reports.
+        </p>
+        <ul>
+          <li><a href="app/">Open the app</a></li>
+          <li><a href="{{downloadUrl}}">Download for offline use</a></li>
+          <li><a href="samples/example-report.pdf">Sample report (PDF)</a></li>
+        </ul>
+        <p>This page and the app need JavaScript. Turn it on to see the interactive preview.</p>
+      </div>
+    </noscript>
+  </body>
+</html>

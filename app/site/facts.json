@@ -1,0 +1,1213 @@
+{
+  "app": {
+    "version": "0.1.0",
+    "catalog": {
+      "rows": "2,455",
+      "manufacturers": "9",
+      "checked": "2,073",
+      "needsReview": "310",
+      "excluded": "72",
+      "brands": [
+        {
+          "name": "alfanar",
+          "rows": "307",
+          "checked": "280",
+          "needsReview": "27",
+          "excluded": "0",
+          "pdfFile": "Alfanar cables.pdf",
+          "pdfPages": "116"
+        },
+        {
+          "name": "Bahra Electric",
+          "rows": "241",
+          "checked": "227",
+          "needsReview": "14",
+          "excluded": "0",
+          "pdfFile": "Bahra electric cables.pdf",
+          "pdfPages": "92"
+        },
+        {
+          "name": "Doha Cables",
+          "rows": "510",
+          "checked": "510",
+          "needsReview": "0",
+          "excluded": "0",
+          "pdfFile": "Doha Cables.pdf",
+          "pdfPages": "174"
+        },
+        {
+          "name": "Ducab",
+          "rows": "21",
+          "checked": "21",
+          "needsReview": "0",
+          "excluded": "0",
+          "pdfFile": "Ducab cables.pdf",
+          "pdfPages": "44"
+        },
+        {
+          "name": "Jeddah Cable Company",
+          "rows": "34",
+          "checked": "16",
+          "needsReview": "0",
+          "excluded": "18",
+          "pdfFile": "Jeddah cables.pdf",
+          "pdfPages": "35"
+        },
+        {
+          "name": "Oman Cables",
+          "rows": "942",
+          "checked": "797",
+          "needsReview": "113",
+          "excluded": "32",
+          "pdfFile": "Oman Cables.pdf",
+          "pdfPages": "183"
+        },
+        {
+          "name": "RAMCRO",
+          "rows": "110",
+          "checked": "110",
+          "needsReview": "0",
+          "excluded": "0",
+          "pdfFile": "Ramco cables.pdf",
+          "pdfPages": "90"
+        },
+        {
+          "name": "Riyadh Cables",
+          "rows": "160",
+          "checked": "0",
+          "needsReview": "138",
+          "excluded": "22",
+          "pdfFile": "Riyadh cables.pdf",
+          "pdfPages": "31"
+        },
+        {
+          "name": "Saudi Cable Company",
+          "rows": "130",
+          "checked": "112",
+          "needsReview": "18",
+          "excluded": "0",
+          "pdfFile": "Saudi cables.pdf",
+          "pdfPages": "93"
+        }
+      ]
+    },
+    "standards": {
+      "widths": "11",
+      "heights": "6",
+      "widthRange": "50-1,000",
+      "heightRange": "25-200"
+    },
+    "limits": {
+      "cableRows": "30",
+      "layers": "3",
+      "quantity": "999"
+    },
+    "trays": [
+      {
+        "name": "TR-01",
+        "service": "LV feeders",
+        "selected": "900 × 75",
+        "fill": "18.3%",
+        "maxFill": "40%",
+        "cables": "9",
+        "layers": "1",
+        "weight": "48.3 kg/m",
+        "rowsWithoutWeight": 0
+      },
+      {
+        "name": "TR-02",
+        "service": "Small power",
+        "selected": "300 × 75",
+        "fill": "34.3%",
+        "maxFill": "40%",
+        "cables": "20",
+        "layers": "2",
+        "weight": "14.9 kg/m",
+        "rowsWithoutWeight": 1
+      },
+      {
+        "name": "TR-03",
+        "service": "Mixed",
+        "selected": "450 × 150",
+        "fill": "20.8%",
+        "maxFill": "40%",
+        "cables": "12",
+        "layers": "2",
+        "weight": "53.8 kg/m",
+        "rowsWithoutWeight": 0
+      }
+    ],
+    "t2": {
+      "cables": "12 × Ø23.5 + 8 × Ø20.0",
+      "layers": "2",
+      "required": "288.7 × 47.0 mm",
+      "firstTry": "300 × 50",
+      "firstFill": "51.5%",
+      "selected": "300 × 75",
+      "selectedFill": "34.3%",
+      "maxFill": "40%",
+      "clearance": "11.8",
+      "spare": "44.2",
+      "cableArea": "7,718"
+    },
+    "t3": {
+      "name": "TR-03",
+      "service": "Mixed",
+      "cables": "12",
+      "layers": "2",
+      "spacing": "0.5 × OD",
+      "clearanceFactor": "0.5 × OD",
+      "selected": "450 × 150",
+      "required": "447.1 × 135.3 mm",
+      "fill": "20.8%",
+      "maxFill": "40%",
+      "clearance": "30.2",
+      "spare": "64.5",
+      "unused": "2.9",
+      "cableArea": "14,065"
+    },
+    "t3Drawing": {
+      "viewBox": {
+        "x": -36,
+        "y": -62,
+        "width": 916,
+        "height": 363.33
+      },
+      "shapes": [
+        {
+          "kind": "zone",
+          "role": "clearance",
+          "x": 0,
+          "y": 0,
+          "width": 50.92,
+          "height": 253.33
+        },
+        {
+          "kind": "zone",
+          "role": "clearance",
+          "x": 709.08,
+          "y": 0,
+          "width": 50.92,
+          "height": 253.33
+        },
+        {
+          "kind": "zone",
+          "role": "spare",
+          "x": 595.25,
+          "y": 0,
+          "width": 108.87,
+          "height": 253.33
+        },
+        {
+          "kind": "line",
+          "role": "boundary",
+          "x1": 50.92,
+          "y1": 0,
+          "x2": 50.92,
+          "y2": 253.33
+        },
+        {
+          "kind": "line",
+          "role": "boundary",
+          "x1": 595.25,
+          "y1": 0,
+          "x2": 595.25,
+          "y2": 253.33
+        },
+        {
+          "kind": "line",
+          "role": "boundary",
+          "x1": 704.11,
+          "y1": 0,
+          "x2": 704.11,
+          "y2": 253.33
+        },
+        {
+          "kind": "line",
+          "role": "boundary",
+          "x1": 709.08,
+          "y1": 0,
+          "x2": 709.08,
+          "y2": 253.33
+        },
+        {
+          "kind": "line",
+          "role": "required-height",
+          "x1": 0,
+          "y1": 24.83,
+          "x2": 760,
+          "y2": 24.83
+        },
+        {
+          "kind": "cable",
+          "cx": 101.84,
+          "cy": 202.41,
+          "r": 50.92,
+          "colourIndex": 0,
+          "tag": 1,
+          "tagSize": 13
+        },
+        {
+          "kind": "cable",
+          "cx": 254.6,
+          "cy": 202.41,
+          "r": 50.92,
+          "colourIndex": 0,
+          "tag": 1,
+          "tagSize": 13
+        },
+        {
+          "kind": "cable",
+          "cx": 388.11,
+          "cy": 221.67,
+          "r": 31.67,
+          "colourIndex": 1,
+          "tag": 2,
+          "tagSize": 13
+        },
+        {
+          "kind": "cable",
+          "cx": 483.11,
+          "cy": 221.67,
+          "r": 31.67,
+          "colourIndex": 1,
+          "tag": 2,
+          "tagSize": 13
+        },
+        {
+          "kind": "cable",
+          "cx": 570.84,
+          "cy": 228.93,
+          "r": 24.4,
+          "colourIndex": 2,
+          "tag": 3,
+          "tagSize": 13
+        },
+        {
+          "kind": "text",
+          "role": "layer",
+          "x": -8,
+          "y": 206.96,
+          "text": "L1",
+          "anchor": "end",
+          "size": 12,
+          "bold": false
+        },
+        {
+          "kind": "cable",
+          "cx": 82.59,
+          "cy": 56.49,
+          "r": 31.67,
+          "colourIndex": 1,
+          "tag": 2,
+          "tagSize": 13
+        },
+        {
+          "kind": "cable",
+          "cx": 177.59,
+          "cy": 56.49,
+          "r": 31.67,
+          "colourIndex": 1,
+          "tag": 2,
+          "tagSize": 13
+        },
+        {
+          "kind": "cable",
+          "cx": 265.32,
+          "cy": 63.76,
+          "r": 24.4,
+          "colourIndex": 2,
+          "tag": 3,
+          "tagSize": 13
+        },
+        {
+          "kind": "cable",
+          "cx": 338.54,
+          "cy": 63.76,
+          "r": 24.4,
+          "colourIndex": 2,
+          "tag": 3,
+          "tagSize": 13
+        },
+        {
+          "kind": "cable",
+          "cx": 411.75,
+          "cy": 63.76,
+          "r": 24.4,
+          "colourIndex": 2,
+          "tag": 3,
+          "tagSize": 13
+        },
+        {
+          "kind": "cable",
+          "cx": 484.96,
+          "cy": 63.76,
+          "r": 24.4,
+          "colourIndex": 2,
+          "tag": 3,
+          "tagSize": 13
+        },
+        {
+          "kind": "cable",
+          "cx": 558.18,
+          "cy": 63.76,
+          "r": 24.4,
+          "colourIndex": 2,
+          "tag": 3,
+          "tagSize": 13
+        },
+        {
+          "kind": "text",
+          "role": "layer",
+          "x": -8,
+          "y": 61.04,
+          "text": "L2",
+          "anchor": "end",
+          "size": 12,
+          "bold": false
+        },
+        {
+          "kind": "rail",
+          "d": "M0 0 V253.33333333333334 H760 V0"
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 0,
+          "y1": -14,
+          "x2": 760,
+          "y2": -14
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 0,
+          "y1": -19,
+          "x2": 0,
+          "y2": -9
+        },
+        {
+          "kind": "line",
+          "role": "extension",
+          "x1": 0,
+          "y1": -9,
+          "x2": 0,
+          "y2": -2
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 50.92,
+          "y1": -19,
+          "x2": 50.92,
+          "y2": -9
+        },
+        {
+          "kind": "line",
+          "role": "extension",
+          "x1": 50.92,
+          "y1": -9,
+          "x2": 50.92,
+          "y2": -2
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 595.25,
+          "y1": -19,
+          "x2": 595.25,
+          "y2": -9
+        },
+        {
+          "kind": "line",
+          "role": "extension",
+          "x1": 595.25,
+          "y1": -9,
+          "x2": 595.25,
+          "y2": -2
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 704.11,
+          "y1": -19,
+          "x2": 704.11,
+          "y2": -9
+        },
+        {
+          "kind": "line",
+          "role": "extension",
+          "x1": 704.11,
+          "y1": -9,
+          "x2": 704.11,
+          "y2": -2
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 709.08,
+          "y1": -19,
+          "x2": 709.08,
+          "y2": -9
+        },
+        {
+          "kind": "line",
+          "role": "extension",
+          "x1": 709.08,
+          "y1": -9,
+          "x2": 709.08,
+          "y2": -2
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 760,
+          "y1": -19,
+          "x2": 760,
+          "y2": -9
+        },
+        {
+          "kind": "line",
+          "role": "extension",
+          "x1": 760,
+          "y1": -9,
+          "x2": 760,
+          "y2": -2
+        },
+        {
+          "kind": "text",
+          "role": "dimension",
+          "x": 25.46,
+          "y": -20,
+          "text": "30.2",
+          "anchor": "middle",
+          "size": 13,
+          "bold": false
+        },
+        {
+          "kind": "text",
+          "role": "dimension",
+          "x": 323.08,
+          "y": -20,
+          "text": "cables 322.3",
+          "anchor": "middle",
+          "size": 13,
+          "bold": false
+        },
+        {
+          "kind": "text",
+          "role": "dimension",
+          "x": 649.68,
+          "y": -20,
+          "text": "spare 64.5",
+          "anchor": "middle",
+          "size": 13,
+          "bold": false
+        },
+        {
+          "kind": "line",
+          "role": "leader",
+          "x1": 706.6,
+          "y1": -35,
+          "x2": 706.6,
+          "y2": -16
+        },
+        {
+          "kind": "text",
+          "role": "dimension",
+          "x": 706.6,
+          "y": -39,
+          "text": "2.9",
+          "anchor": "middle",
+          "size": 13,
+          "bold": false
+        },
+        {
+          "kind": "text",
+          "role": "dimension",
+          "x": 734.54,
+          "y": -20,
+          "text": "30.2",
+          "anchor": "middle",
+          "size": 13,
+          "bold": false
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 0,
+          "y1": 273.33,
+          "x2": 760,
+          "y2": 273.33
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 0,
+          "y1": 268.33,
+          "x2": 0,
+          "y2": 278.33
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 760,
+          "y1": 268.33,
+          "x2": 760,
+          "y2": 278.33
+        },
+        {
+          "kind": "text",
+          "role": "dimension",
+          "x": 380,
+          "y": 291.33,
+          "text": "450 standard width",
+          "anchor": "middle",
+          "size": 13,
+          "bold": true
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 778,
+          "y1": 0,
+          "x2": 778,
+          "y2": 253.33
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 773,
+          "y1": 0,
+          "x2": 783,
+          "y2": 0
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 773,
+          "y1": 253.33,
+          "x2": 783,
+          "y2": 253.33
+        },
+        {
+          "kind": "text",
+          "role": "dimension",
+          "x": 784,
+          "y": 131.22,
+          "text": "150",
+          "anchor": "start",
+          "size": 13,
+          "bold": true
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 827.4,
+          "y1": 24.83,
+          "x2": 827.4,
+          "y2": 253.33
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 822.4,
+          "y1": 24.83,
+          "x2": 832.4,
+          "y2": 24.83
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 822.4,
+          "y1": 253.33,
+          "x2": 832.4,
+          "y2": 253.33
+        },
+        {
+          "kind": "text",
+          "role": "dimension",
+          "x": 833.4,
+          "y": 143.63,
+          "text": "135.3",
+          "anchor": "start",
+          "size": 13,
+          "bold": false
+        }
+      ]
+    },
+    "t2Drawing": {
+      "viewBox": {
+        "x": -36,
+        "y": -81,
+        "width": 916,
+        "height": 319
+      },
+      "shapes": [
+        {
+          "kind": "zone",
+          "role": "clearance",
+          "x": 0,
+          "y": 0,
+          "width": 29.77,
+          "height": 190
+        },
+        {
+          "kind": "zone",
+          "role": "clearance",
+          "x": 730.23,
+          "y": 0,
+          "width": 29.77,
+          "height": 190
+        },
+        {
+          "kind": "zone",
+          "role": "spare",
+          "x": 589.63,
+          "y": 0,
+          "width": 111.97,
+          "height": 190
+        },
+        {
+          "kind": "line",
+          "role": "boundary",
+          "x1": 29.77,
+          "y1": 0,
+          "x2": 29.77,
+          "y2": 190
+        },
+        {
+          "kind": "line",
+          "role": "boundary",
+          "x1": 589.63,
+          "y1": 0,
+          "x2": 589.63,
+          "y2": 190
+        },
+        {
+          "kind": "line",
+          "role": "boundary",
+          "x1": 701.61,
+          "y1": 0,
+          "x2": 701.61,
+          "y2": 190
+        },
+        {
+          "kind": "line",
+          "role": "boundary",
+          "x1": 730.23,
+          "y1": 0,
+          "x2": 730.23,
+          "y2": 190
+        },
+        {
+          "kind": "line",
+          "role": "required-height",
+          "x1": 0,
+          "y1": 70.93,
+          "x2": 760,
+          "y2": 70.93
+        },
+        {
+          "kind": "cable",
+          "cx": 59.53,
+          "cy": 160.23,
+          "r": 29.77,
+          "colourIndex": 0,
+          "tag": 1,
+          "tagSize": 13
+        },
+        {
+          "kind": "cable",
+          "cx": 119.07,
+          "cy": 160.23,
+          "r": 29.77,
+          "colourIndex": 0,
+          "tag": 1,
+          "tagSize": 13
+        },
+        {
+          "kind": "cable",
+          "cx": 178.6,
+          "cy": 160.23,
+          "r": 29.77,
+          "colourIndex": 0,
+          "tag": 1,
+          "tagSize": 13
+        },
+        {
+          "kind": "cable",
+          "cx": 238.13,
+          "cy": 160.23,
+          "r": 29.77,
+          "colourIndex": 0,
+          "tag": 1,
+          "tagSize": 13
+        },
+        {
+          "kind": "cable",
+          "cx": 297.67,
+          "cy": 160.23,
+          "r": 29.77,
+          "colourIndex": 0,
+          "tag": 1,
+          "tagSize": 13
+        },
+        {
+          "kind": "cable",
+          "cx": 357.2,
+          "cy": 160.23,
+          "r": 29.77,
+          "colourIndex": 0,
+          "tag": 1,
+          "tagSize": 13
+        },
+        {
+          "kind": "cable",
+          "cx": 412.3,
+          "cy": 164.67,
+          "r": 25.33,
+          "colourIndex": 1,
+          "tag": 2,
+          "tagSize": 13
+        },
+        {
+          "kind": "cable",
+          "cx": 462.97,
+          "cy": 164.67,
+          "r": 25.33,
+          "colourIndex": 1,
+          "tag": 2,
+          "tagSize": 13
+        },
+        {
+          "kind": "cable",
+          "cx": 513.63,
+          "cy": 164.67,
+          "r": 25.33,
+          "colourIndex": 1,
+          "tag": 2,
+          "tagSize": 13
+        },
+        {
+          "kind": "cable",
+          "cx": 564.3,
+          "cy": 164.67,
+          "r": 25.33,
+          "colourIndex": 1,
+          "tag": 2,
+          "tagSize": 13
+        },
+        {
+          "kind": "text",
+          "role": "layer",
+          "x": -8,
+          "y": 164.78,
+          "text": "L1",
+          "anchor": "end",
+          "size": 12,
+          "bold": false
+        },
+        {
+          "kind": "cable",
+          "cx": 59.53,
+          "cy": 100.7,
+          "r": 29.77,
+          "colourIndex": 0,
+          "tag": 1,
+          "tagSize": 13
+        },
+        {
+          "kind": "cable",
+          "cx": 119.07,
+          "cy": 100.7,
+          "r": 29.77,
+          "colourIndex": 0,
+          "tag": 1,
+          "tagSize": 13
+        },
+        {
+          "kind": "cable",
+          "cx": 178.6,
+          "cy": 100.7,
+          "r": 29.77,
+          "colourIndex": 0,
+          "tag": 1,
+          "tagSize": 13
+        },
+        {
+          "kind": "cable",
+          "cx": 238.13,
+          "cy": 100.7,
+          "r": 29.77,
+          "colourIndex": 0,
+          "tag": 1,
+          "tagSize": 13
+        },
+        {
+          "kind": "cable",
+          "cx": 297.67,
+          "cy": 100.7,
+          "r": 29.77,
+          "colourIndex": 0,
+          "tag": 1,
+          "tagSize": 13
+        },
+        {
+          "kind": "cable",
+          "cx": 357.2,
+          "cy": 100.7,
+          "r": 29.77,
+          "colourIndex": 0,
+          "tag": 1,
+          "tagSize": 13
+        },
+        {
+          "kind": "cable",
+          "cx": 412.3,
+          "cy": 105.13,
+          "r": 25.33,
+          "colourIndex": 1,
+          "tag": 2,
+          "tagSize": 13
+        },
+        {
+          "kind": "cable",
+          "cx": 462.97,
+          "cy": 105.13,
+          "r": 25.33,
+          "colourIndex": 1,
+          "tag": 2,
+          "tagSize": 13
+        },
+        {
+          "kind": "cable",
+          "cx": 513.63,
+          "cy": 105.13,
+          "r": 25.33,
+          "colourIndex": 1,
+          "tag": 2,
+          "tagSize": 13
+        },
+        {
+          "kind": "cable",
+          "cx": 564.3,
+          "cy": 105.13,
+          "r": 25.33,
+          "colourIndex": 1,
+          "tag": 2,
+          "tagSize": 13
+        },
+        {
+          "kind": "text",
+          "role": "layer",
+          "x": -8,
+          "y": 105.25,
+          "text": "L2",
+          "anchor": "end",
+          "size": 12,
+          "bold": false
+        },
+        {
+          "kind": "rail",
+          "d": "M0 0 V190 H760 V0"
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 0,
+          "y1": -14,
+          "x2": 760,
+          "y2": -14
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 0,
+          "y1": -19,
+          "x2": 0,
+          "y2": -9
+        },
+        {
+          "kind": "line",
+          "role": "extension",
+          "x1": 0,
+          "y1": -9,
+          "x2": 0,
+          "y2": -2
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 29.77,
+          "y1": -19,
+          "x2": 29.77,
+          "y2": -9
+        },
+        {
+          "kind": "line",
+          "role": "extension",
+          "x1": 29.77,
+          "y1": -9,
+          "x2": 29.77,
+          "y2": -2
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 589.63,
+          "y1": -19,
+          "x2": 589.63,
+          "y2": -9
+        },
+        {
+          "kind": "line",
+          "role": "extension",
+          "x1": 589.63,
+          "y1": -9,
+          "x2": 589.63,
+          "y2": -2
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 701.61,
+          "y1": -19,
+          "x2": 701.61,
+          "y2": -9
+        },
+        {
+          "kind": "line",
+          "role": "extension",
+          "x1": 701.61,
+          "y1": -9,
+          "x2": 701.61,
+          "y2": -2
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 730.23,
+          "y1": -19,
+          "x2": 730.23,
+          "y2": -9
+        },
+        {
+          "kind": "line",
+          "role": "extension",
+          "x1": 730.23,
+          "y1": -9,
+          "x2": 730.23,
+          "y2": -2
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 760,
+          "y1": -19,
+          "x2": 760,
+          "y2": -9
+        },
+        {
+          "kind": "line",
+          "role": "extension",
+          "x1": 760,
+          "y1": -9,
+          "x2": 760,
+          "y2": -2
+        },
+        {
+          "kind": "line",
+          "role": "leader",
+          "x1": 14.88,
+          "y1": -35,
+          "x2": 14.88,
+          "y2": -16
+        },
+        {
+          "kind": "text",
+          "role": "dimension",
+          "x": 14.88,
+          "y": -39,
+          "text": "11.8",
+          "anchor": "middle",
+          "size": 13,
+          "bold": false
+        },
+        {
+          "kind": "text",
+          "role": "dimension",
+          "x": 309.7,
+          "y": -20,
+          "text": "cables 221.0",
+          "anchor": "middle",
+          "size": 13,
+          "bold": false
+        },
+        {
+          "kind": "text",
+          "role": "dimension",
+          "x": 645.62,
+          "y": -20,
+          "text": "spare 44.2",
+          "anchor": "middle",
+          "size": 13,
+          "bold": false
+        },
+        {
+          "kind": "line",
+          "role": "leader",
+          "x1": 715.92,
+          "y1": -35,
+          "x2": 715.92,
+          "y2": -16
+        },
+        {
+          "kind": "text",
+          "role": "dimension",
+          "x": 715.92,
+          "y": -39,
+          "text": "11.3",
+          "anchor": "middle",
+          "size": 13,
+          "bold": false
+        },
+        {
+          "kind": "line",
+          "role": "leader",
+          "x1": 745.12,
+          "y1": -54,
+          "x2": 745.12,
+          "y2": -16
+        },
+        {
+          "kind": "text",
+          "role": "dimension",
+          "x": 745.12,
+          "y": -58,
+          "text": "11.8",
+          "anchor": "middle",
+          "size": 13,
+          "bold": false
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 0,
+          "y1": 210,
+          "x2": 760,
+          "y2": 210
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 0,
+          "y1": 205,
+          "x2": 0,
+          "y2": 215
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 760,
+          "y1": 205,
+          "x2": 760,
+          "y2": 215
+        },
+        {
+          "kind": "text",
+          "role": "dimension",
+          "x": 380,
+          "y": 228,
+          "text": "300 standard width",
+          "anchor": "middle",
+          "size": 13,
+          "bold": true
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 778,
+          "y1": 0,
+          "x2": 778,
+          "y2": 190
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 773,
+          "y1": 0,
+          "x2": 783,
+          "y2": 0
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 773,
+          "y1": 190,
+          "x2": 783,
+          "y2": 190
+        },
+        {
+          "kind": "text",
+          "role": "dimension",
+          "x": 784,
+          "y": 99.55,
+          "text": "75",
+          "anchor": "start",
+          "size": 13,
+          "bold": true
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 827.4,
+          "y1": 70.93,
+          "x2": 827.4,
+          "y2": 190
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 822.4,
+          "y1": 70.93,
+          "x2": 832.4,
+          "y2": 70.93
+        },
+        {
+          "kind": "line",
+          "role": "dimension",
+          "x1": 822.4,
+          "y1": 190,
+          "x2": 832.4,
+          "y2": 190
+        },
+        {
+          "kind": "text",
+          "role": "dimension",
+          "x": 833.4,
+          "y": 135.02,
+          "text": "47.0",
+          "anchor": "start",
+          "size": 13,
+          "bold": false
+        }
+      ]
+    }
+  },
+  "files": {
+    "pdfMb": {
+      "Alfanar cables.pdf": "10.4",
+      "Bahra electric cables.pdf": "12.3",
+      "Doha Cables.pdf": "7.8",
+      "Ducab cables.pdf": "2.6",
+      "Jeddah cables.pdf": "3.4",
+      "Oman Cables.pdf": "10.4",
+      "Ramco cables.pdf": "2.2",
+      "Riyadh cables.pdf": "9.1",
+      "Saudi cables.pdf": "19.7"
+    },
+    "reportPages": "7",
+    "offlineMb": "79"
+  }
+}

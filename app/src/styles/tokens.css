@@ -1,0 +1,153 @@
+/*
+ * Design tokens. Components read colours only from these variables, so the
+ * light theme, the dark theme and the section drawing always stay in step.
+ * Light is the default; dark applies from the OS setting unless the user
+ * picked a theme, which sets data-theme on <html>.
+ */
+:root {
+  color-scheme: light;
+
+  /* Cool neutrals with a trace of warmth; --ink-3 meets WCAG AA on every ground. */
+  --bg: #f4f5f2;
+  --surface: #fdfdfc;
+  --surface-2: #ecede8;
+  --ink: #1b2a38;
+  --ink-2: #465563;
+  --ink-3: #5c6873;
+  --line: #dfe1da;
+  --line-2: #c6c9c0;
+  --accent: #b5651d;
+  --accent-ink: #8f4e14;
+  --accent-soft: #f4e4d4;
+
+  --pass: #2a7248;
+  --pass-bg: #e1efe6;
+  --warn: #835a00;
+  --warn-bg: #f6ecd2;
+  --fail: #a93628;
+  --fail-bg: #f6e0db;
+
+  /* Section drawing */
+  --cab-1: #c07a35;
+  --cab-2: #3f7896;
+  --cab-3: #5e8a4a;
+  --cab-4: #8a5a9e;
+  --cab-5: #2f8f8a;
+  --cab-6: #b8902a;
+  --cab-7: #5f6f80;
+  --cab-8: #b5566b;
+  --cab-9: #7d8a2e;
+  --cab-10: #4f5fb0;
+  --cab-11: #9c5a3c;
+  --cab-12: #3c93b8;
+  --cab-stroke: #1b2a38;
+  --cab-tag: #ffffff;
+  --zone-spare: rgba(181, 101, 29, 0.14);
+  --hatch: #8e989f;
+  --req-line: #9a6a00;
+  --grid-line: rgba(27, 42, 56, 0.06);
+
+  --shadow-1: 0 1px 2px rgba(27, 42, 56, 0.06), 0 8px 24px rgba(27, 42, 56, 0.08);
+
+  --sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --cond: 'IBM Plex Sans Condensed', 'IBM Plex Sans', 'Arial Narrow', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+
+  --radius-1: 3px;
+  --radius-2: 5px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+
+    --bg: #14191d;
+    --surface: #1d2429;
+    --surface-2: #252d33;
+    --ink: #ece9e1;
+    --ink-2: #aeb8bf;
+    --ink-3: #8c979f;
+    --line: #2f383f;
+    --line-2: #3e4850;
+    --accent: #de9152;
+    --accent-ink: #ecab74;
+    --accent-soft: #3a2a1c;
+
+    --pass: #7acb9b;
+    --pass-bg: #1d3327;
+    --warn: #e6ba62;
+    --warn-bg: #3a301e;
+    --fail: #f29a8e;
+    --fail-bg: #40251f;
+
+    --cab-1: #d08a48;
+    --cab-2: #63a1c4;
+    --cab-3: #86b470;
+    --cab-4: #b48ac8;
+    --cab-5: #5cbfb8;
+    --cab-6: #d8b14e;
+    --cab-7: #93a3b3;
+    --cab-8: #d98397;
+    --cab-9: #aab85a;
+    --cab-10: #8594e0;
+    --cab-11: #c98a68;
+    --cab-12: #6cc0e0;
+    --cab-stroke: #0d1114;
+    --cab-tag: #0d1114;
+    --zone-spare: rgba(222, 145, 82, 0.18);
+    --hatch: #6a757d;
+    --req-line: #e6ba62;
+    --grid-line: rgba(236, 233, 225, 0.05);
+
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.35), 0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg: #14191d;
+  --surface: #1d2429;
+  --surface-2: #252d33;
+  --ink: #ece9e1;
+  --ink-2: #aeb8bf;
+  --ink-3: #8c979f;
+  --line: #2f383f;
+  --line-2: #3e4850;
+  --accent: #de9152;
+  --accent-ink: #ecab74;
+  --accent-soft: #3a2a1c;
+
+  --pass: #7acb9b;
+  --pass-bg: #1d3327;
+  --warn: #e6ba62;
+  --warn-bg: #3a301e;
+  --fail: #f29a8e;
+  --fail-bg: #40251f;
+
+  --cab-1: #d08a48;
+  --cab-2: #63a1c4;
+  --cab-3: #86b470;
+  --cab-4: #b48ac8;
+  --cab-5: #5cbfb8;
+  --cab-6: #d8b14e;
+  --cab-7: #93a3b3;
+  --cab-8: #d98397;
+  --cab-9: #aab85a;
+  --cab-10: #8594e0;
+  --cab-11: #c98a68;
+  --cab-12: #6cc0e0;
+  --cab-stroke: #0d1114;
+  --cab-tag: #0d1114;
+  --zone-spare: rgba(222, 145, 82, 0.18);
+  --hatch: #6a757d;
+  --req-line: #e6ba62;
+  --grid-line: rgba(236, 233, 225, 0.05);
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.35), 0 8px 24px rgba(0, 0, 0, 0.4);
+}

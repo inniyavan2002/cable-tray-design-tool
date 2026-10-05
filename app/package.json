@@ -1,0 +1,79 @@
+{
+  "name": "cable-tray-design",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Browser-based cable tray sizing, section drawing and reporting.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "dev": "node node_modules/vite/bin/vite.js",
+    "build": "node node_modules/vite/bin/vite.js build",
+    "build:single": "node node_modules/vite/bin/vite.js build --mode single && node scripts/finalize-single.mjs",
+    "build:all": "npm run build && npm run build:single",
+    "build:site": "node node_modules/vite/bin/vite.js build --mode website && node node_modules/vite/bin/vite.js build --mode site-app && node scripts/assemble-site.mjs",
+    "dev:site": "node node_modules/vite/bin/vite.js --mode website",
+    "preview:site": "node node_modules/vite/bin/vite.js preview --mode website",
+    "preview": "node node_modules/vite/bin/vite.js preview",
+    "typecheck": "node node_modules/typescript/bin/tsc -p tsconfig.json && node node_modules/typescript/bin/tsc -p tsconfig.node.json",
+    "lint": "node node_modules/eslint/bin/eslint.js .",
+    "test": "node node_modules/vitest/vitest.mjs run",
+    "test:watch": "node node_modules/vitest/vitest.mjs",
+    "test:speed": "node node_modules/vitest/vitest.mjs run --config vitest.speed.config.ts",
+    "test:e2e": "node node_modules/@playwright/test/cli.js test",
+    "test:site": "node node_modules/@playwright/test/cli.js test --config playwright.site.config.ts",
+    "compare": "node node_modules/vitest/vitest.mjs run --config vitest.report.config.ts src/domain/testing/engineComparison.report.ts",
+    "catalog:review": "node node_modules/vitest/vitest.mjs run --config vitest.report.config.ts src/data/catalog/catalogReview.report.ts",
+    "catalog:import-review": "node scripts/import-catalog-review.mjs",
+    "site:facts": "node node_modules/vitest/vitest.mjs run --config vitest.report.config.ts src/site/siteFacts.report.ts",
+    "site:screenshots": "node scripts/site-screenshots.mjs",
+    "playwright:install": "node node_modules/@playwright/test/cli.js install chromium",
+    "verify": "node scripts/verify-build.mjs",
+    "verify:site": "node scripts/verify-site.mjs",
+    "package": "npm run build:single && node scripts/package.mjs",
+    "check": "npm run lint && npm run typecheck && npm test && npm run test:speed && npm run build:all && npm run verify && npm run test:e2e && npm run build:site && npm run verify:site && npm run test:site"
+  },
+  "dependencies": {
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/ibm-plex-sans": "^5.3.0",
+    "@fontsource/ibm-plex-sans-condensed": "^5.3.0",
+    "exceljs": "^4.4.0",
+    "fflate": "^0.8.3",
+    "framer-motion": "^13.4.4",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
+    "lucide-react": "^1.48.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "zustand": "^5.0.15"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.63.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@types/node": "^24.19.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "eslint": "^10.11.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.12.0",
+    "jsdom": "^30.1.1",
+    "subset-font": "^2.9.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.70.1",
+    "vite": "^8.3.1",
+    "vite-plugin-singlefile": "^2.3.3",
+    "vitest": "^5.0.2"
+  },
+  "overrides": {
+    "exceljs": {
+      "uuid": "^11.1.1"
+    }
+  }
+}
