@@ -79,14 +79,10 @@ Icons are from Lucide (`lucide-react`, ISC licence).
 
 ## Feedback script
 
-The contact form sends to the same script as the old page's feedback form. It says "Sent" only when the script confirms it. Until the script replies with a result, the page tells people it could not confirm that their message arrived. Whoever owns the script can add the reply at the end of `doPost`:
+The contact form sends to the same Google Apps Script as the old page's feedback form. The script saves the message, emails the team and replies `{ "success": true, "message": "Feedback submitted successfully." }`.
 
-```js
-function doPost(e) {
-  const message = JSON.parse(e.postData.contents);
-  // … the existing code that saves the message …
-  return ContentService.createTextOutput(JSON.stringify({ ok: true })).setMimeType(ContentService.MimeType.JSON);
-}
-```
+Browsers cannot read that reply. Apps Script answers a POST by redirecting to its reply on script.googleusercontent.com, and when a browser follows the redirect, Google answers 404 (it refuses the headers browsers add after a cross-site redirect, `Origin: null` among them; checked against the live script). The form therefore stops at the redirect and takes it as the confirmation: Apps Script only redirects once `doPost` has run and returned its reply. A script that fails with an error shows an error page instead, which the form reports as unconfirmed, never as sent. For the same reason the form cannot see a `{ "success": false }` reply, so the script should let a real failure throw rather than catch it and reply false.
 
-If saving fails, reply with `{ "ok": false }` instead. Besides `name`, `organisation` (the form's Company field) and `feedback`, messages now carry `email` (optional, for a reply), `version` (the app version) and `source` (`"website"`). The script must save `email` too, or replies cannot be sent.
+A server that replies directly is read: `{ "success": true }` (or `{ "ok": true }`) confirms, and `{ "success": false, "message": "…" }` is shown as not sent, in its own words, with the message kept in the form.
+
+Besides `name`, `organisation` (the form's Company field) and `feedback`, messages carry `email` (required, for the reply), `version` (the app version) and `source` (`"website"`).

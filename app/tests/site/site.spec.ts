@@ -4,6 +4,8 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page, type Route } from '@playwright/test';
 
 const FEEDBACK = /script\.google\.com\/macros\//;
+/** What the team's script replies when it has saved a message and emailed the team (checked against the live script). */
+const SCRIPT_SENT = '{"success":true,"message":"Feedback submitted successfully."}';
 const SITE = fileURLToPath(new URL('../../dist-site/', import.meta.url));
 /** Every entrance and one-off animation has finished by then. */
 const SETTLED_MS = 5000;
@@ -71,6 +73,7 @@ const heroDrawing = (page: Page) => hero(page).getByRole('img', { name: /^Illust
 async function fillContact(page: Page, text = 'The weight of Oman Cables 4C 6 mm² shows as unknown in TR-02.') {
   const form = page.locator('#contact form');
   await form.getByLabel('Name').fill('A. Engineer');
+  await form.getByLabel('Email').fill('a.engineer@example.com');
   await form.getByLabel('Message').fill(text);
   await form.getByRole('button', { name: 'Send message' }).click();
   return form;
@@ -578,40 +581,75 @@ test('shows a screen full size, and Escape returns to where the reader was', asy
 });
 
 test.describe('the contact form', () => {
-  test('asks for a name, enough detail and a usable email before sending', async ({ page }) => {
+  test('asks for a name, an email address, and enough detail before sending', async ({ page }) => {
     await open(page);
+    let sent = false;
+    await page.route(FEEDBACK, (route) => {
+      sent = true;
+      return answer(SCRIPT_SENT)(route);
+    });
     const form = page.locator('#contact form');
+    // The email is required: the label no longer says optional.
+    await expect(form.getByText('(optional)')).toHaveCount(1);
+    await expect(form.getByLabel('Email')).toHaveAttribute('required', '');
+    await form.getByRole('button', { name: 'Send message' }).click();
+    await expect(form.getByText('Enter your email address, like name@example.com')).toBeVisible();
     await form.getByLabel('Email').fill('a.engineer@example');
     await form.getByRole('button', { name: 'Send message' }).click();
     await expect(form.getByText('Enter your name.')).toBeVisible();
-    await expect(form.getByText('Enter an email address like name@example.com')).toBeVisible();
+    await expect(form.getByText('Enter your email address, like name@example.com')).toBeVisible();
     await expect(form.getByText('Write at least 25 characters')).toBeVisible();
     await expect(form.getByLabel('Name')).toBeFocused();
     await expect(form.getByLabel('Name')).toHaveAttribute('aria-invalid', 'true');
     await expect(form.getByLabel('Email')).toHaveAttribute('aria-invalid', 'true');
+    expect(sent).toBe(false);
   });
 
-  test('says "Sent" only when the script confirms, and sends every field with the app version', async ({ page }) => {
+  test('says the message was sent when the script confirms it, and sends every field with the app version', async ({ page }) => {
     await open(page);
     let body: Record<string, string> = {};
     await page.route(FEEDBACK, (route) => {
       body = JSON.parse(route.request().postData() ?? '{}');
-      return answer('{"ok":true}')(route);
+      return answer(SCRIPT_SENT)(route);
     });
     const form = page.locator('#contact form');
-    await form.getByLabel('Email').fill('a.engineer@example.com');
     await form.getByLabel('Company').fill('Example Consultants');
     await fillContact(page);
-    await expect(form.getByRole('status')).toHaveText(/^Sent\./);
+    await expect(form.getByRole('status')).toHaveText(/^Message sent successfully\./);
+    await expect(form.getByRole('status')).toHaveAttribute('data-result', 'sent');
     await expect(form.getByLabel('Message')).toHaveValue('');
     expect(body).toMatchObject({ name: 'A. Engineer', email: 'a.engineer@example.com', organisation: 'Example Consultants', version: '0.1.0', source: 'website' });
   });
 
-  test('keeps the message when the script reports a problem', async ({ page }) => {
+  test('says the message was sent when Apps Script redirects to its reply, without asking for the reply', async ({ page }) => {
     await open(page);
-    await page.route(FEEDBACK, answer('{"ok":false}'));
+    // As the live script does: a redirect to its reply, which Google refuses to give a browser.
+    let replyAsked = false;
+    await page.route(/script\.googleusercontent\.com/, (route) => {
+      replyAsked = true;
+      return route.fulfill({ status: 404, headers: { 'access-control-allow-origin': '*' }, body: 'Not found' });
+    });
+    await page.route(FEEDBACK, (route) => route.fulfill({ status: 302, headers: { location: 'https://script.googleusercontent.com/macros/echo?user_content_key=test' } }));
     const form = await fillContact(page);
-    await expect(form.getByRole('status')).toHaveText(/^Not sent/);
+    await expect(form.getByRole('status')).toHaveText(/^Message sent successfully\./);
+    await expect(form.getByLabel('Message')).toHaveValue('');
+    expect(replyAsked).toBe(false);
+  });
+
+  test('keeps the message when the script reports a problem, and says what it was', async ({ page }) => {
+    await open(page);
+    await page.route(FEEDBACK, answer('{"success":false,"message":"The feedback sheet could not be opened"}'));
+    const form = await fillContact(page);
+    await expect(form.getByRole('status')).toHaveText('Not sent: The feedback sheet could not be opened. Your message is still in the form.');
+    await expect(form.getByLabel('Message')).not.toHaveValue('');
+    await expect(form.getByLabel('Email')).toHaveValue('a.engineer@example.com');
+  });
+
+  test('keeps the message when the server fails', async ({ page }) => {
+    await open(page);
+    await page.route(FEEDBACK, (route) => route.fulfill({ status: 500, headers: { 'access-control-allow-origin': '*' }, body: 'Internal error' }));
+    const form = await fillContact(page);
+    await expect(form.getByRole('status')).toHaveText(/^Not sent: the feedback service reported a problem/);
     await expect(form.getByLabel('Message')).not.toHaveValue('');
   });
 
@@ -635,7 +673,7 @@ test.describe('the contact form', () => {
     let sent = false;
     await page.route(FEEDBACK, (route) => {
       sent = true;
-      return answer('{"ok":true}')(route);
+      return answer(SCRIPT_SENT)(route);
     });
     await context.setOffline(true);
     const form = await fillContact(page);

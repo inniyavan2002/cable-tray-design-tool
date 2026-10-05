@@ -1,7 +1,7 @@
 import { Send } from 'lucide-react';
 import { useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { APP, CONFIG } from '../data';
-import { checkFeedback, MIN_FEEDBACK_LENGTH, RESULT_TEXT, sendFeedback, type FeedbackResult } from '../feedback';
+import { checkFeedback, MIN_FEEDBACK_LENGTH, RESULT_TEXT, resultText, sendFeedback, type FeedbackOutcome } from '../feedback';
 import { Reveal, SECTION, SectionHeading, Wrap } from './ui';
 
 const input =
@@ -9,15 +9,16 @@ const input =
 const TONE = { pass: 'bg-pass-bg text-pass', warn: 'bg-warn-bg text-warn', fail: 'bg-fail-bg text-fail' } as const;
 
 /**
- * Questions, problems and suggestions, sent to the team's feedback sheet. The
- * form says "Sent" only when the sheet confirms it (see feedback.ts).
+ * Questions, problems and suggestions, sent to the team's feedback sheet,
+ * with the sender's email address for the reply. The form says the message
+ * was sent only when the sheet confirms it (see feedback.ts).
  */
 export function Contact() {
   const [values, setValues] = useState({ name: '', email: '', company: '', message: '' });
   const [trap, setTrap] = useState('');
   const [problems, setProblems] = useState({ name: false, email: false, feedback: false });
   const [sending, setSending] = useState(false);
-  const [result, setResult] = useState<FeedbackResult | null>(null);
+  const [result, setResult] = useState<FeedbackOutcome | null>(null);
   const nameInput = useRef<HTMLInputElement>(null);
   const emailInput = useRef<HTMLInputElement>(null);
   const messageInput = useRef<HTMLTextAreaElement>(null);
@@ -36,7 +37,7 @@ export function Contact() {
     // A bot filled the hidden field: act as if sent, and send nothing.
     if (trap) {
       clear();
-      setResult('sent');
+      setResult({ result: 'sent' });
       return;
     }
     setSending(true);
@@ -48,7 +49,7 @@ export function Contact() {
       version: APP.version,
     });
     setSending(false);
-    if (outcome === 'sent') clear();
+    if (outcome.result === 'sent') clear();
     setResult(outcome);
   };
 
@@ -63,7 +64,7 @@ export function Contact() {
             <p>
               <b className="text-ink">For a wrong catalogue value,</b> give the manufacturer, the cable and the catalogue page.
             </p>
-            <p>Leave an email address if you would like a reply.</p>
+            <p>The team replies to the email address you give.</p>
             {CONFIG.contactEmail && (
               <p>
                 You can also email <a href={`mailto:${CONFIG.contactEmail}`}>{CONFIG.contactEmail}</a>.
@@ -90,7 +91,7 @@ export function Contact() {
                   className={input}
                 />
               </Field>
-              <Field id="ct-email" label="Email" optional error={problems.email ? 'Enter an email address like name@example.com, or leave it empty.' : undefined}>
+              <Field id="ct-email" label="Email" error={problems.email ? 'Enter your email address, like name@example.com, so the team can reply.' : undefined}>
                 <input
                   ref={emailInput}
                   id="ct-email"
@@ -98,6 +99,7 @@ export function Contact() {
                   type="email"
                   autoComplete="email"
                   maxLength={200}
+                  required
                   value={values.email}
                   onChange={set('email')}
                   aria-invalid={problems.email}
@@ -144,8 +146,8 @@ export function Contact() {
                 <Send className="h-4 w-4" aria-hidden="true" />
               </button>
             </div>
-            <p role="status" aria-live="polite" className={result ? `rounded-lg px-4 py-3 text-[14.5px] ${TONE[RESULT_TEXT[result].tone]}` : 'hidden'}>
-              {result && RESULT_TEXT[result].text}
+            <p role="status" aria-live="polite" data-result={result?.result} className={result ? `rounded-lg px-4 py-3 text-[14.5px] ${TONE[RESULT_TEXT[result.result].tone]}` : 'hidden'}>
+              {result && resultText(result)}
             </p>
           </form>
         </Reveal>
