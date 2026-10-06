@@ -1,0 +1,59 @@
+.wrap {
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+.button {
+  display: grid;
+  place-items: center;
+  width: 15px;
+  height: 15px;
+  padding: 0;
+  border: 1px solid var(--line-2);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--ink-3);
+  font: italic 600 10px/1 Georgia, 'Times New Roman', serif;
+  cursor: help;
+}
+
+.button:hover,
+.button:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+/* Placed by the component, fixed to the window so no panel edge cuts it off. */
+.tip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  width: max-content;
+  max-width: min(260px, calc(100vw - 16px));
+  padding: 8px 10px;
+  border-radius: var(--radius-2);
+  background: var(--ink);
+  color: var(--bg);
+  box-shadow: var(--shadow-1);
+  font: 400 12px/1.45 var(--sans);
+  font-style: normal;
+  letter-spacing: normal;
+  text-align: left;
+  text-transform: none;
+  white-space: normal;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.tip[data-open='true'] {
+  opacity: 1;
+  visibility: visible;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tip[data-open='true'] {
+    transition: opacity 0.15s ease;
+  }
+}

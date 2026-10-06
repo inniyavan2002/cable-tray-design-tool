@@ -372,6 +372,57 @@ test.describe('the features’ workflow', () => {
   });
 });
 
+test.describe('the drawing sheet below the hero', () => {
+  test('carries fragments of a tray layout in the margins, labelled with the example project', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.setViewportSize({ width: 1920, height: 1080 });
+    await open(page);
+    const fragments = page.locator('.sheet-fragment');
+    await expect.poll(() => fragments.count()).toBeGreaterThan(3);
+    await expect(page.locator('.sheet-fragment text', { hasText: 'TR-02 300 × 75' }).first()).toBeAttached();
+    // In the margins, outside the content column.
+    const column = await page.locator('#features h2').evaluate((h) => {
+      const wrap = h.closest('.mx-auto')!.getBoundingClientRect();
+      return { left: wrap.left + 24, right: wrap.right - 24 };
+    });
+    for (const box of await fragments.evaluateAll((all) => all.map((f) => f.getBoundingClientRect().toJSON() as DOMRect))) {
+      expect(box.right <= column.left + 1 || box.left >= column.right - 1, JSON.stringify(box)).toBe(true);
+    }
+  });
+
+  test('frames the features’ workflow, with the routes in and out and the stages’ statuses', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.setViewportSize({ width: 1600, height: 900 });
+    await open(page);
+    const features = page.locator('#features');
+    await features.scrollIntoViewIfNeeded();
+    await expect(features.locator('.fw-frame')).toHaveCount(1);
+    await expect(features.locator('.fw-route')).toHaveCount(2);
+    await expect(features.locator('.fw-status text')).toHaveText(['Checked', 'Calculating', 'Verified', 'Report ready']);
+  });
+
+  test('puts the showcase on a floor plan of the drawing’s building', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.setViewportSize({ width: 1600, height: 900 });
+    await open(page);
+    const plan = page.locator('#showcase .floor-plan');
+    await expect(plan).toBeAttached();
+    for (const text of ['RISER', 'MDB', 'TR-03 450 × 150', 'LEVEL 2 PLAN']) await expect(plan.getByText(text, { exact: true })).toHaveCount(1);
+    await expect(plan.getByText('6000', { exact: true })).toHaveCount(3);
+  });
+
+  test('pulses travel the routes while motion is on, and none at all when it is reduced', async ({ page }) => {
+    await page.setViewportSize({ width: 1600, height: 900 });
+    await open(page);
+    await page.locator('#showcase').scrollIntoViewIfNeeded();
+    await expect.poll(() => page.locator('#showcase .net-pulse').count()).toBeGreaterThan(0);
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.reload();
+    await page.locator('#showcase').scrollIntoViewIfNeeded();
+    await expect(page.locator('#features .net-pulse, #showcase .net-pulse, .sheet-fragment .net-pulse')).toHaveCount(0);
+  });
+});
+
 test.describe('the network behind the hero', () => {
   /** Boxes of everything the network writes, and of what it must stay clear of: the hero's text lines and buttons, and the drawing's labels and monitor. */
   const boxes = (page: Page) =>
@@ -385,12 +436,14 @@ test.describe('the network behind the hero', () => {
         lines.push(...range.getClientRects());
       }
       return {
-        written: [...h.querySelectorAll('svg.net text')].map((t) => ({ text: t.textContent, ...rect(t.getBoundingClientRect()) })),
+        written: [...h.querySelectorAll('svg.net text, [data-analysis], [data-strip]')].map((t) => ({ text: t.textContent, ...rect(t.getBoundingClientRect()) })),
         keepClear: [
           ...lines,
           ...h.querySelectorAll('[data-hero-text] a'),
           ...h.querySelectorAll('svg.bldg [data-sys="label"][data-show~="all"] .b-label-box'),
           h.querySelector('[data-hero-monitor]')!,
+          ...h.querySelectorAll('[data-hero-legend] li'),
+          h.querySelector('#hero-motion')!,
         ].map((r) => rect(r instanceof DOMRect ? r : r.getBoundingClientRect())),
       };
     });
@@ -416,16 +469,48 @@ test.describe('the network behind the hero', () => {
     });
   }
 
-  test('quotes the app’s figures for the example trays', async ({ page }) => {
+  test('analyses the example trays with the app’s figures, beside the main board’s single-line diagram and the status strip', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.setViewportSize({ width: 1600, height: 900 });
     await open(page);
+    const analysis = hero(page).locator('[data-analysis]');
+    await expect(analysis.locator('[data-tray="TR-01"]')).toHaveText(/TR-01\s*900 × 75\s*18\.3%/);
+    await expect(analysis.locator('[data-tray="TR-02"]')).toHaveText(/TR-02\s*300 × 75\s*34\.3%/);
+    await expect(analysis.locator('[data-tray="TR-03"]')).toHaveText(/TR-03\s*450 × 150\s*20\.8%/);
+    // Still, it shows the tray the monitor shows: TR-02 and its 20 cables, against the 40% limit, paused.
+    await expect(analysis.locator('[data-tray][data-active]')).toHaveAttribute('data-tray', 'TR-02');
+    await expect(analysis.locator('dl')).toHaveText(/Cables\s*20 TR-02\s*Fill limit\s*40%\s*System status\s*Paused/);
+    const strip = hero(page).locator('[data-strip] li');
+    await expect(strip).toHaveText(['Power flow', '→Cable route check', '→Tray sizing', '→Fill validation', '→Verified']);
+    await expect(strip.last()).toHaveAttribute('data-state', 'active');
+    const sheet = hero(page).locator('svg.net');
+    for (const text of ['MDB', 'SMDB-3', 'SMDB-2', 'SMDB-1', 'LEVEL 0', 'SUPPLY', 'FACP', 'MDB → TR-01', '300 × 75 mm', '450 × 150 mm']) await expect(sheet.getByText(text, { exact: true })).toHaveCount(1);
+  });
+
+  test('follows the scan from tray to tray while it runs, and steps through the checks', async ({ page }) => {
+    await page.setViewportSize({ width: 1600, height: 900 });
+    await open(page);
+    const analysis = hero(page).locator('[data-analysis]');
+    await expect(analysis.locator('dl')).toContainText('Active', { timeout: 8000 });
+    await expect(analysis.locator('[data-tray][data-active]')).toHaveAttribute('data-tray', 'TR-01', { timeout: 10000 });
+    await expect(analysis.locator('dl')).toContainText('9 TR-01');
+    await expect(analysis.locator('[data-tray][data-active]')).toHaveAttribute('data-tray', 'TR-02', { timeout: 5000 });
+    await expect(analysis.locator('dl')).toContainText('20 TR-02');
+    const active = hero(page).locator('[data-strip] li[data-state="active"]');
+    const first = await active.textContent();
+    await expect(active).not.toHaveText(first!, { timeout: 3000 });
+  });
+
+  test('without room for the analysis, keeps tray TR-02’s readout between the text and the drawing', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await open(page);
+    await expect(hero(page).locator('[data-analysis]')).toHaveCount(0);
     const network = hero(page).locator('svg.net');
     await expect(network.locator('[data-row="TR-02"]')).toHaveText('TR-02 300 × 75');
     await expect(network.locator('[data-row="FILL"]')).toHaveText('FILL 34.3%');
     await expect(network.locator('[data-row="CABLES"]')).toHaveText('CABLES 20');
-    await expect(network.locator('[data-row="WT"]')).toHaveText('WT 14.9 kg/m');
-    for (const text of ['40% FILL LIMIT', '300 × 75 mm', '450 × 150 mm', '900 × 75 mm', 'MDB → TR-01', 'SYSTEM ACTIVE', 'POWER FLOW']) await expect(network.getByText(text, { exact: true })).toHaveCount(1);
+    await expect(network.getByText('40% FILL LIMIT', { exact: true })).toHaveCount(1);
   });
 
   test('is left out where the hero stacks', async ({ page }) => {

@@ -1,0 +1,17 @@
+/* The recommendation and the summary side by side when the pane is wide enough. */
+.pairWrap {
+  container-type: inline-size;
+  min-width: 0;
+}
+
+.pair {
+  display: grid;
+  gap: var(--space-3);
+  align-items: start;
+}
+
+@container (min-width: 760px) {
+  .pair {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  }
+}

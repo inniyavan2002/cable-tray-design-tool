@@ -1,8 +1,10 @@
 import { motion } from 'framer-motion';
-import { useEffect, useId, useRef, useState, type RefObject } from 'react';
+import { useEffect, useId, useState, type RefObject } from 'react';
 import { INK, PORTS, VIEWBOX } from '../building/geometry';
 import { countUp, useRemeasure } from '../building/telemetry';
-import { BLEED, CHAR, READOUT, layoutNetwork, type Box, type HeroMeasures, type Network, type Point, type Readout as ReadoutData, type Tag, type Tone } from './layout';
+import { RoutePulse } from '../pulse';
+import { APP } from '../../data';
+import { BLEED, CHAR, READOUT, STRIP, layoutNetwork, type Box, type HeroMeasures, type Network, type Panel, type Point, type Readout as ReadoutData, type SingleLine, type Tag, type Tone } from './layout';
 
 const ease = [0.16, 1, 0.3, 1] as const;
 const TONE: Record<Tone, string> = { power: 'var(--energy)', lighting: 'var(--warn)', fire: 'var(--fail)' };
@@ -78,6 +80,7 @@ function measure(section: HTMLElement): HeroMeasures | null {
     },
     building: fromDrawing(INK[0]!),
     parts: [...INK.slice(1).map(fromDrawing), monitorBox, union(legendBoxes as Box[])],
+    monitor: monitorBox,
     button: buttonBox,
     supply: at(PORTS.supply),
     riser: at(PORTS.riser),
@@ -135,10 +138,6 @@ interface LayerProps {
   appear: number | null;
 }
 
-/** Pulses that come in from beyond the sheet's edge, or leave past it, fade over this distance, as the sheet fades there. */
-const EDGE_FADE = 260;
-/** Share of each pulse's cycle spent travelling; for the rest it is gone, then it sets off again. */
-const TRAVEL = 0.92;
 /** Places an HTML mark at a point of the network: the layer reaches past the hero by the bleed, and lines sit half a pixel in. */
 const at = ([x, y]: Point) => ({ left: round(x + BLEED + 0.5), top: round(y + BLEED + 0.5) });
 
@@ -188,8 +187,24 @@ export function NetworkTraces({ net, running, still, appear }: LayerProps) {
             {net.detectors.map(([x, y], i) => (
               <circle key={i} cx={x} cy={y} r="2.4" className="net-detector" />
             ))}
+            {net.singleLine && <SingleLineDiagram diagram={net.singleLine} />}
             {net.junctions.map(({ at: [x, y], tone }, i) => (
               <circle key={i} cx={x} cy={y} r="2" className="net-node" fill={TONE[tone]} />
+            ))}
+            {net.notes.map(({ at: [x, y], text, anchor }) => (
+              <text key={text} x={x} y={y} textAnchor={anchor} className="net-note">
+                {text}
+              </text>
+            ))}
+            {net.zones.columns.map(({ x, label }) => (
+              <text key={label} x={x} y={net.zones.top} textAnchor="middle" className="net-zone">
+                {label}
+              </text>
+            ))}
+            {net.zones.rows.map(({ y, label }) => (
+              <text key={label} x={net.zones.left} y={y} textAnchor="middle" className="net-zone">
+                {label}
+              </text>
             ))}
           </motion.g>
         </g>
@@ -201,7 +216,9 @@ export function NetworkTraces({ net, running, still, appear }: LayerProps) {
       </motion.div>
       {!still && (
         <motion.div aria-hidden="true" className="net absolute inset-0" {...fade(1.5)}>
-          {net.flows.flatMap((flow, i) => Array.from({ length: flow.count }, (_, k) => <Pulse key={`${i}-${k}`} flow={flow} lead={(k / flow.count + i * 0.37) % 1} running={running} />))}
+          {net.flows.flatMap((flow, i) =>
+            Array.from({ length: flow.count }, (_, k) => <RoutePulse key={`${i}-${k}`} route={flow} lead={(k / flow.count + i * 0.37) % 1} running={running} origin={[BLEED + 0.5, BLEED + 0.5]} />),
+          )}
         </motion.div>
       )}
     </>
@@ -209,50 +226,30 @@ export function NetworkTraces({ net, running, still, appear }: LayerProps) {
 }
 
 /**
- * One pulse travelling its route, again and again, starting `lead` of the
- * way through its cycle so no two set off together. The routes are straight
- * runs, so the pulse moves between their corners and turns at each.
+ * The main board as a single-line diagram, drawn on its bus: the busbar
+ * between its feeders, a breaker on each feeder and the board it feeds
+ * (a box with a diagonal, the distribution board's symbol), and the supply
+ * coming in through its transformer.
  */
-function Pulse({ flow, lead, running }: { flow: Network['flows'][number]; lead: number; running: boolean }) {
-  const mark = useRef<HTMLSpanElement>(null);
-  useEffect(() => {
-    const element = mark.current;
-    if (!element) return;
-    const { points } = flow;
-    const runs = points.slice(1).map((p, i) => ({ from: points[i]!, to: p, length: Math.hypot(p[0] - points[i]![0], p[1] - points[i]![1]) }));
-    const total = runs.reduce((sum, r) => sum + r.length, 0);
-    const place = ([x, y]: Point, angle: number) => `translate(${round(x)}px, ${round(y)}px) rotate(${round(angle)}deg)`;
-    const frames: Keyframe[] = [];
-    let done = 0;
-    for (const r of runs) {
-      const angle = (Math.atan2(r.to[1] - r.from[1], r.to[0] - r.from[0]) * 180) / Math.PI;
-      frames.push({ offset: (TRAVEL * done) / total, transform: place(r.from, angle) });
-      done += r.length;
-      frames.push({ offset: (TRAVEL * done) / total, transform: place(r.to, angle) });
-    }
-    frames.push({ offset: 1, transform: frames[frames.length - 1]!.transform });
-    const share = (edge: boolean) => (edge ? Math.min(0.35, EDGE_FADE / total) : 0.05);
-    const timing: KeyframeAnimationOptions = { duration: flow.seconds * 1000, iterations: Infinity, delay: -lead * flow.seconds * 1000, easing: 'linear' };
-    const moves = [
-      element.animate(frames, timing),
-      element.animate(
-        [
-          { offset: 0, opacity: 0 },
-          { offset: TRAVEL * share(flow.edges[0]), opacity: 1 },
-          { offset: TRAVEL * (1 - share(flow.edges[1])), opacity: 1 },
-          { offset: TRAVEL, opacity: 0 },
-          { offset: 1, opacity: 0 },
-        ],
-        timing,
-      ),
-    ];
-    if (!running) for (const m of moves) m.pause();
-    return () => {
-      for (const m of moves) m.cancel();
-    };
-  }, [flow, lead, running]);
-  // Anchored at the network's origin; its animation carries it from there.
-  return <span ref={mark} className="net-pulse" data-tone={flow.tone} style={at([0, 0])} />;
+function SingleLineDiagram({ diagram: { x, bar, feeders, incomer } }: { diagram: SingleLine }) {
+  return (
+    <g className="net-sld">
+      {feeders.map((f) => (
+        <g key={f.label}>
+          <line x1={x} x2={f.board + 6} y1={f.y} y2={f.y} className="net-feeder" />
+          <rect x={x - 20} y={f.y - 3.5} width="7" height="7" className="net-breaker" />
+          <rect x={f.board - 6} y={f.y - 5} width="12" height="10" className="net-board" />
+          <path d={`M${f.board - 6} ${f.y + 5}L${f.board + 6} ${f.y - 5}`} className="net-board" />
+          <text x={f.board - 10} y={f.y + 3} textAnchor="end" className="net-note">
+            {f.label}
+          </text>
+        </g>
+      ))}
+      <path d={`M${x} ${bar[0]}V${bar[1]}`} className="net-busbar" />
+      <circle cx={incomer[0]} cy={incomer[1] - 4} r="5" className="net-transformer" />
+      <circle cx={incomer[0]} cy={incomer[1] + 4} r="5" className="net-transformer" />
+    </g>
+  );
 }
 
 /** A run's tray size between two oblique ticks, like a dimension on a layout drawing; turned to read up a vertical run. */
@@ -269,11 +266,13 @@ function Dimension({ at: [x, y], vertical, text, span }: { at: Point; vertical: 
 }
 
 /**
- * The network's live data: status and route tags at its connection points,
- * and tray TR-02's readout. They sit a little nearer than the circuits, so
- * they move a little more with the mouse.
+ * The network's live data: the route tag where power drops into the riser,
+ * the live tray analysis beside the drawing (or, without room for it, tray
+ * TR-02's readout), and the status strip under the text. They sit a little
+ * nearer than the circuits, so they move a little more with the mouse.
+ * `scanning` is the tray the drawing's scan is passing.
  */
-export function NetworkTags({ net, running, appear }: Omit<LayerProps, 'still'>) {
+export function NetworkTags({ net, running, still, appear, scanning }: LayerProps & { scanning: string }) {
   const show = (delay: number) => (appear === null ? {} : { initial: { opacity: 0 }, animate: { opacity: 1 }, transition: { duration: 0.6, delay: appear + delay, ease } });
   return (
     <>
@@ -294,29 +293,110 @@ export function NetworkTags({ net, running, appear }: Omit<LayerProps, 'still'>)
           )}
         </g>
       </svg>
-      {/* Each status tag's light, blinking. */}
-      <div aria-hidden="true" className="net absolute inset-0">
-        {net.tags.map((tag, i) =>
-          tag.kind === 'status' ? <motion.span key={tag.text} className="net-led" style={at(statusLight(tag))} {...show(1.1 + i * 0.2)} /> : null,
-        )}
-      </div>
+      {net.analysis && (
+        <motion.div aria-hidden="true" className="absolute inset-0" {...show(1.2)}>
+          <TrayAnalysis panel={net.analysis} scanning={scanning} still={still} />
+        </motion.div>
+      )}
+      {net.strip && (
+        <motion.div aria-hidden="true" className="absolute inset-0" {...show(1.5)}>
+          <StatusStrip panel={net.strip} running={running} still={still} />
+        </motion.div>
+      )}
     </>
   );
 }
 
-/** Where a status tag's light sits: right of the junction it comes first; left of it, before the text. */
-function statusLight({ at: [x, y], side, dy, text }: Tag): Point {
-  return [side === 'right' ? x + 13 : x - 10 - text.length * CHAR - 7, y + dy - 3.3];
+/** An HTML panel's place in the layer, which reaches past the hero by the bleed. */
+const placed = (panel: Panel) => ({ left: round(panel.x + BLEED + 0.5), top: round(panel.y + BLEED + 0.5), width: panel.width });
+
+/**
+ * The example project's trays under live analysis: each tray's size and fill
+ * against the limit, the tray the drawing's scan is passing lit and its fill
+ * measured afresh, with that tray's cable count. The figures are the app's;
+ * the status is the animation's, as the monitor's is.
+ */
+function TrayAnalysis({ panel, scanning, still }: { panel: Panel; scanning: string; still: boolean }) {
+  const active = APP.trays.find((t) => t.name.toLowerCase().replace('-', '') === scanning) ?? APP.trays[1]!;
+  return (
+    <div data-analysis className="net-analysis absolute" style={placed(panel)}>
+      <p className="net-analysis-title">Live tray analysis</p>
+      <ul className="mt-2.5 grid gap-2.5">
+        {APP.trays.map((t) => {
+          const on = t === active;
+          return (
+            <li key={t.name} data-tray={t.name} data-active={on || undefined} className="net-tray">
+              <div className="flex items-baseline gap-2">
+                <span className="net-tray-name w-[42px] shrink-0">{t.name}</span>
+                <span className="flex-1 whitespace-nowrap">{t.selected}</span>
+                <span>{t.fill}</span>
+              </div>
+              <div className="net-meter">
+                {/* Measured afresh each time the scan reaches this tray. */}
+                <span key={on ? `on-${scanning}` : 'off'} className="net-meter-fill" style={{ width: t.fill }} />
+                <span className="net-meter-limit" style={{ left: t.maxFill }} />
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+      <dl className="net-analysis-figures mt-3 grid gap-1 pt-2.5">
+        <div className="flex justify-between gap-2">
+          <dt>Cables</dt>
+          <dd>
+            {active.cables} <span className="text-ink-3">{active.name}</span>
+          </dd>
+        </div>
+        <div className="flex justify-between gap-2">
+          <dt>Fill limit</dt>
+          <dd>{active.maxFill}</dd>
+        </div>
+        <div className="flex justify-between gap-2">
+          <dt>System status</dt>
+          <dd className={`inline-flex items-center gap-1.5 ${still ? 'text-ink-3' : 'text-energy'}`}>
+            <span className={`net-dot ${still ? 'bg-ink-3' : 'bg-energy'}`} />
+            {still ? 'Paused' : 'Active'}
+          </dd>
+        </div>
+      </dl>
+    </div>
+  );
+}
+
+/** The checks in turn, as a status strip: the stage running lit, with its light; all checked when nothing moves. */
+const STAGES = ['Power flow', 'Cable route check', 'Tray sizing', 'Fill validation', 'Verified'];
+const STAGE_SECONDS = 1.8;
+
+function StatusStrip({ panel, running, still }: { panel: Panel; running: boolean; still: boolean }) {
+  const [stage, setStage] = useState(0);
+  useEffect(() => {
+    if (!running) return;
+    const timer = setInterval(() => setStage((s) => (s + 1) % STAGES.length), STAGE_SECONDS * 1000);
+    return () => clearInterval(timer);
+  }, [running]);
+  const active = still ? STAGES.length - 1 : stage;
+  return (
+    <ol data-strip className="net-strip absolute flex items-center gap-3" style={{ ...placed(panel), height: STRIP.height }}>
+      {STAGES.map((name, i) => (
+        <li key={name} data-state={i < active ? 'done' : i === active ? 'active' : 'next'} className="flex items-center gap-3">
+          {i > 0 && <span className="net-strip-arrow">→</span>}
+          <span className="inline-flex items-center gap-2">
+            <span className="net-strip-dot" />
+            {name}
+          </span>
+        </li>
+      ))}
+    </ol>
+  );
 }
 
 function NetTag({ tag }: { tag: Tag }) {
   const [x, y] = tag.at;
   const right = tag.side === 'right';
   const baseline = y + tag.dy;
-  // A status leads with its light (statusLight), so its text starts after it.
-  const textX = right ? x + 10 + (tag.kind === 'status' ? 9 : 0) : x - 10;
+  const textX = right ? x + 10 : x - 10;
   return (
-    <g className="net-tag" data-kind={tag.kind}>
+    <g className="net-tag">
       <text x={textX} y={baseline} textAnchor={right ? 'start' : 'end'}>
         {tag.text}
       </text>

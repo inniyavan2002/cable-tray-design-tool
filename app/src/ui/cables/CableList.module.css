@@ -1,9 +1,36 @@
 .empty {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: start;
   padding: var(--space-3);
   border: 1px dashed var(--line-2);
   border-radius: var(--radius-1);
+  background: var(--bg);
   color: var(--ink-2);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.emptyTitle {
+  margin-bottom: 2px;
+  color: var(--ink);
+  font-weight: 600;
   font-size: 13px;
+}
+
+.emptyIcon {
+  width: 44px;
+  fill: none;
+  stroke: var(--ink-3);
+  stroke-width: 1.2;
+  stroke-dasharray: 2.4 2;
+}
+
+.emptyIcon .emptyRail {
+  stroke: var(--ink-2);
+  stroke-width: 2;
+  stroke-dasharray: none;
 }
 
 .list {
@@ -112,17 +139,29 @@
   color: var(--fail);
 }
 
+/* The main action of the inputs: solid, full width. */
 .add {
   width: 100%;
-  margin-top: var(--space-2);
-  border: 1px dashed var(--accent);
-  border-radius: var(--radius-1);
-  background: transparent;
-  padding: 8px;
-  color: var(--accent-ink);
+  margin-top: var(--space-3);
+  border: 1px solid var(--action);
+  border-radius: var(--radius-2);
+  background: var(--action);
+  padding: 10px;
+  color: var(--action-ink);
   font-weight: 600;
-  font-size: 13px;
+  font-size: 13.5px;
+  letter-spacing: 0.01em;
   cursor: pointer;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+}
+
+.add:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+/* With no cables yet, a soft ring draws the eye to the first step. */
+.add[data-first='true'] {
+  box-shadow: 0 0 0 4px var(--accent-soft);
 }
 
 .add:disabled {

@@ -1,0 +1,203 @@
+.bar {
+  display: grid;
+  gap: 8px;
+  padding: 12px var(--space-4) 10px;
+  border-bottom: 1px solid var(--line-2);
+  background: var(--surface);
+  min-width: 0;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  position: relative;
+  min-width: 0;
+}
+
+/* The connector to the next step, drawn from this step's marker. */
+.step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: 38px;
+  right: 6px;
+  height: 1px;
+  background: var(--line-2);
+}
+
+.step[data-state='done']:not(:last-child)::after {
+  background: var(--ink-3);
+}
+
+.link {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  max-width: 100%;
+  padding: 0 10px 0 0;
+  border-radius: var(--radius-1);
+  color: inherit;
+  text-decoration: none;
+}
+
+.index {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border: 1px solid var(--line-2);
+  border-radius: 50%;
+  background: var(--surface);
+  font: 600 11px var(--mono);
+  color: var(--ink-3);
+}
+
+.text {
+  display: grid;
+  min-width: 0;
+  padding-top: 1px;
+  /* Covers the connector behind the words. */
+  padding-right: 6px;
+  background: var(--surface);
+}
+
+.label {
+  font: 600 12.5px/1.25 var(--cond);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.number {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-3);
+}
+
+.detail {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 11px var(--mono);
+  color: var(--ink-3);
+}
+
+.link:hover .label {
+  color: var(--ink);
+}
+
+.link:hover .index {
+  border-color: var(--ink-3);
+}
+
+.step[data-state='done'] .index {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--surface);
+}
+
+.step[data-state='current'] .index {
+  border: 2px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+.step[data-state='current'] .label {
+  color: var(--ink);
+}
+
+.step[data-state='current'] .detail {
+  color: var(--accent-ink);
+}
+
+.step[data-state='attention'] .index {
+  border-color: var(--warn);
+  background: var(--warn-bg);
+  color: var(--warn);
+}
+
+.step[data-state='attention'] .label,
+.step[data-state='attention'] .detail {
+  color: var(--warn);
+}
+
+.next {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--ink-2);
+}
+
+.next b {
+  flex: none;
+  font: 600 10px var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+}
+
+.next[data-tone='warn'] b {
+  color: var(--warn);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .index {
+    transition:
+      background-color 0.25s ease,
+      border-color 0.25s ease,
+      box-shadow 0.25s ease;
+  }
+}
+
+/* Narrow: markers only, with the current step's name. */
+@media (max-width: 760px) {
+  .bar {
+    padding: 10px var(--space-4) 8px;
+  }
+
+  .step:not(:last-child)::after {
+    left: 34px;
+  }
+
+  .text {
+    display: none;
+  }
+
+  .step[data-state='current'] .text,
+  .step[data-state='attention'] .text {
+    display: grid;
+    position: absolute;
+    top: 34px;
+    left: 0;
+    padding: 0;
+    background: transparent;
+  }
+
+  .step[data-state='current'] .detail,
+  .step[data-state='attention'] .detail {
+    display: none;
+  }
+
+  .bar:has(.step[data-state='current'], .step[data-state='attention']) .steps {
+    padding-bottom: 20px;
+  }
+
+  .step:last-child[data-state='current'] .text,
+  .step:last-child[data-state='attention'] .text {
+    left: auto;
+    right: 0;
+    text-align: right;
+  }
+}

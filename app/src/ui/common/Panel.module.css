@@ -4,6 +4,8 @@
   border-radius: var(--radius-2);
   padding: var(--space-3) var(--space-4) var(--space-4);
   min-width: 0;
+  /* Room above a panel the step bar scrolls to. */
+  scroll-margin-top: var(--space-3);
 }
 
 .head {
@@ -14,12 +16,80 @@
   margin-bottom: var(--space-3);
 }
 
+/* Panel titles read like drawing-sheet headings: condensed capitals. */
 .title {
-  font-size: 13.5px;
-  font-weight: 600;
+  font: 600 12.5px/1.3 var(--cond);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
 }
 
 .meta {
   font: 12px var(--mono);
   color: var(--ink-3);
+}
+
+/* Collapsible panel */
+.panel[data-open='false'] {
+  padding-bottom: var(--space-3);
+}
+
+.foldHead {
+  margin: calc(var(--space-1) * -1) calc(var(--space-2) * -1) 0;
+}
+
+.fold {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  width: 100%;
+  border: 0;
+  border-radius: var(--radius-1);
+  background: transparent;
+  padding: var(--space-1) var(--space-2);
+  text-align: left;
+  cursor: pointer;
+}
+
+.fold:hover .chevron {
+  stroke: var(--accent);
+}
+
+.foldSummary {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 12px var(--mono);
+  color: var(--ink-3);
+}
+
+.chevron {
+  width: 12px;
+  height: 12px;
+  margin-left: auto;
+  align-self: center;
+  flex: none;
+  fill: none;
+  stroke: var(--ink-3);
+  stroke-width: 1.6;
+}
+
+.panel[data-open='false'] .chevron {
+  transform: rotate(-90deg);
+}
+
+.foldBody {
+  margin-top: var(--space-3);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .chevron {
+    transition: transform 0.15s ease;
+  }
+
+  .foldBody {
+    animation: global(fade-in) 0.18s ease-out;
+  }
 }

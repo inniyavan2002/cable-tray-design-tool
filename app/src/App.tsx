@@ -10,6 +10,7 @@ import { InputsPane } from './ui/shell/InputsPane';
 import { NoticeBar } from './ui/shell/NoticeBar';
 import { PaneSwitch } from './ui/shell/PaneSwitch';
 import { ResultPane } from './ui/shell/ResultPane';
+import { StepBar } from './ui/shell/StepBar';
 import { TopBar } from './ui/shell/TopBar';
 import { useShortcuts } from './ui/shell/useShortcuts';
 import { StandardsDialog } from './ui/standards/StandardsDialog';
@@ -44,6 +45,9 @@ export function App() {
           </div>
         ) : (
           <>
+            <div className={styles.stepsArea}>
+              <StepBar tray={tray} outcome={outcome} />
+            </div>
             <div className={styles.switchArea}>
               <PaneSwitch />
             </div>

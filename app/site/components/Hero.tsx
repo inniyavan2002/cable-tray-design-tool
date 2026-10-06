@@ -127,7 +127,7 @@ export function Hero() {
               <NetworkTraces net={network.net} running={running} still={Boolean(reduce)} appear={network.appear} />
             </motion.div>
             <motion.div className="absolute" style={{ inset: -GRID_BLEED, ...nodes }}>
-              <NetworkTags net={network.net} running={running} appear={network.appear} />
+              <NetworkTags net={network.net} running={running} still={Boolean(reduce)} appear={network.appear} scanning={running ? scanning : 'tr02'} />
             </motion.div>
           </>
         )}
@@ -137,10 +137,11 @@ export function Hero() {
         className="pointer-events-none absolute inset-0 -z-10 opacity-0 group-data-[pointer=on]/hero:opacity-100 motion-safe:transition-opacity motion-safe:duration-500"
         style={{ background: spotlight }}
       />
-      {/* Now and then a faint scan passes down the drawing sheet. */}
+      {/* Now and then a faint scan passes down the drawing sheet, and more slowly another across it. */}
       {!reduce && (
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
           <span className="grid-scan" />
+          <span className="grid-scan-across" />
         </div>
       )}
 

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, ty
 import { APP } from '../data';
 import { Building, type BuildingView } from './building/Building';
 import { MotionButton, useLoopRunning, useStill } from './loop';
+import { FloorPlan } from './sheet/FloorPlan';
 import { LAID, TrayDrawing } from './TrayDrawing';
 import { Reveal, SECTION, SectionHeading, Wrap } from './ui';
 
@@ -108,13 +109,14 @@ export function Showcase() {
   return (
     <section id="showcase" aria-labelledby="showcase-title" className={`${SECTION} overflow-hidden border-y border-line bg-bg-2`}>
       <div aria-hidden="true" className="sheet-grid absolute inset-0" />
+      <FloorPlan />
       <Wrap className="relative">
         <SectionHeading id="showcase-title" intro="Switch views to follow each system through a building. The trays these systems share are what the app sizes.">
           Where the trays go
         </SectionHeading>
 
         <Reveal scale className="mt-10 grid grid-cols-[minmax(0,1fr)] items-start gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,0.75fr)]">
-          <div className="rounded-2xl border border-line-2 bg-bg/80">
+          <div className="rounded-2xl border border-line-2 bg-bg/95">
             <div role="tablist" aria-label="Building views" onKeyDown={onKeyDown} className="flex gap-1 overflow-x-auto border-b border-line-2 p-2">
               {VIEWS.map((v, i) => {
                 const selected = v.id === active;

@@ -1,0 +1,220 @@
+.empty {
+  display: grid;
+  gap: 4px;
+  padding: var(--space-3);
+  border: 1px dashed var(--line-2);
+  border-radius: var(--radius-1);
+  background: var(--bg);
+  font-size: 12.5px;
+  color: var(--ink-2);
+}
+
+.emptyTitle {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.pick {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.glyph {
+  width: 54px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-1);
+  background: var(--bg);
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2.4;
+}
+
+.pickSize {
+  font: 600 22px/1.15 var(--mono);
+}
+
+.pickWhy {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+
+.verdict {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: var(--space-3);
+  padding: 7px 10px;
+  border-radius: var(--radius-1);
+  font: 600 12px var(--mono);
+  letter-spacing: 0.03em;
+}
+
+.verdict[data-tone='pass'] {
+  color: var(--pass);
+  background: var(--pass-bg);
+}
+
+.verdict[data-tone='warn'] {
+  color: var(--warn);
+  background: var(--warn-bg);
+}
+
+.mark {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  flex: none;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.todo {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+
+.sizes {
+  width: 100%;
+  margin-top: var(--space-3);
+  border-collapse: collapse;
+  font: 12px var(--mono);
+}
+
+.caption {
+  padding-bottom: 6px;
+  caption-side: top;
+  text-align: left;
+  font: 600 10.5px var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.sizes th,
+.sizes td {
+  padding: 5px 12px 5px 0;
+  border-top: 1px solid var(--line);
+  text-align: left;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.sizes td:last-child {
+  padding-right: 0;
+  text-align: right;
+  white-space: normal;
+  color: var(--ink-3);
+}
+
+.sizes tr[data-state='selected'] th,
+.sizes tr[data-state='selected'] td {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.sizes tr[data-state='selected'] th {
+  box-shadow: inset 3px 0 0 var(--accent);
+  padding-left: 8px;
+}
+
+.sizes tr[data-state='other'] th {
+  padding-left: 8px;
+  color: var(--ink-2);
+}
+
+/* A small fill bar against the limit for each size. */
+.meter {
+  position: relative;
+  display: inline-block;
+  width: 56px;
+  height: 6px;
+  margin-right: 8px;
+  vertical-align: middle;
+  border-radius: 3px;
+  background: var(--surface-2);
+}
+
+.meter i {
+  position: absolute;
+  inset: 0;
+  border-radius: 3px;
+  background: var(--pass);
+  transform: scaleX(var(--fill, 0));
+  transform-origin: left;
+}
+
+tr[data-pass='false'] .meter i {
+  background: var(--warn);
+}
+
+.meter u {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 1.5px;
+  background: var(--ink);
+  text-decoration: none;
+}
+
+/* Design summary: a drawing title block. */
+.block {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-1);
+  overflow: hidden;
+}
+
+.cell {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  padding: 7px 10px;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.cell:nth-child(2n) {
+  border-right: 0;
+}
+
+.cell dt {
+  font: 600 9.5px var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.cell dd {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 600 13px var(--mono);
+}
+
+.statusCell {
+  grid-column: 1 / -1;
+  border-bottom: 0;
+  background: var(--bg);
+}
+
+.live {
+  color: var(--live);
+}
+
+.waiting {
+  font-weight: 400;
+  color: var(--ink-3);
+}

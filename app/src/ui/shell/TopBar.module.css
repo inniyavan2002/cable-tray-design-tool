@@ -62,8 +62,8 @@
 .actions {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 6px 12px;
+  align-items: flex-end;
+  gap: 6px 14px;
   margin-left: auto;
 }
 
@@ -71,6 +71,21 @@
 .group {
   display: flex;
   gap: 4px;
+}
+
+/* A captioned group: PROJECT, DESIGN, OUTPUT, APPEARANCE. */
+.tool {
+  display: grid;
+  gap: 3px;
+  padding-left: 14px;
+  border-left: 1px solid var(--line);
+}
+
+.caption {
+  font: 600 9.5px/1 var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
 }
 
 .button {
@@ -98,11 +113,33 @@
   line-height: 1.2;
 }
 
+/* Export: the one output action, in the action colour. */
 .primary {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: var(--bg);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-inline: 14px 16px;
+  background: var(--action);
+  border-color: var(--action);
+  color: var(--action-ink);
   font-weight: 600;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+}
+
+.button.primary:hover:not(:disabled) {
+  border-color: var(--action);
+  color: var(--action-ink);
+  filter: brightness(1.08);
+}
+
+.exportIcon {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .fileInput {
@@ -113,6 +150,15 @@
   .actions {
     margin-left: 0;
     gap: 6px;
+  }
+
+  .tool {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .caption {
+    display: none;
   }
 
   .button {

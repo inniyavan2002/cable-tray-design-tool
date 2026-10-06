@@ -61,7 +61,7 @@ export function Metrics() {
   const ref = useRef<HTMLUListElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.6 });
   return (
-    <div className="relative border-y border-line bg-bg-2">
+    <div className="relative border-y border-line bg-bg-2/75">
       <Wrap>
         <ul ref={ref} aria-label="In figures" className="grid grid-cols-2 lg:grid-cols-4">
           {METRICS.map((m, i) => (

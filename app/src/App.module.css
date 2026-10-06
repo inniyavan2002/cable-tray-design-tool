@@ -12,13 +12,24 @@
   font-size: 12.5px;
 }
 
-/* Desktop, 1280 px and up: tray list | inputs | result. */
+/* Desktop, 1280 px and up: tray list | inputs | result, with the design steps across the two. */
 .body {
   flex: 1;
   display: grid;
   grid-template-columns: 212px minmax(360px, 430px) minmax(0, 1fr);
-  grid-template-areas: 'rail inputs result';
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    'rail steps steps'
+    'rail inputs result';
   align-items: start;
+}
+
+.stepsArea {
+  grid-area: steps;
+  min-width: 0;
+  position: sticky;
+  top: 0;
+  z-index: 5;
 }
 
 .railArea {
@@ -50,6 +61,11 @@
   grid-template-columns: 212px minmax(0, 1fr);
   grid-template-rows: auto;
   grid-template-areas: 'rail compare';
+}
+
+/* The inputs sit on the page ground; the result reads as the working sheet. */
+.inputs {
+  background: var(--bg);
 }
 
 .inputs,
@@ -86,9 +102,10 @@
 @media (max-width: 1279px) {
   .body {
     grid-template-columns: minmax(320px, 400px) minmax(0, 1fr);
-    grid-template-rows: auto 1fr;
+    grid-template-rows: auto auto 1fr;
     grid-template-areas:
       'rail rail'
+      'steps steps'
       'inputs result';
   }
 }
@@ -97,11 +114,16 @@
 @media (max-width: 1023px) {
   .body {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto auto 1fr;
+    grid-template-rows: auto auto auto 1fr;
     grid-template-areas:
       'rail'
+      'steps'
       'switch'
       'pane';
+  }
+
+  .stepsArea {
+    position: static;
   }
 
   .switchArea {

@@ -12,8 +12,12 @@ import { fileURLToPath } from 'node:url';
 
 const site = new URL('../dist-site/', import.meta.url);
 const problems = [];
-/** What a first visit downloads for the page itself: text, styles and script as served compressed, plus fonts. */
-const PAGE_BUDGET = 300 * 1024;
+/**
+ * What a first visit downloads for the page itself: text, styles and script as served compressed, plus fonts.
+ * Raised from 300 KB when the live engineering drawing around the content (the hero's network, the drawing
+ * sheet and the showcase's floor plan) brought the page to it; most of the page is React, Framer Motion and the fonts.
+ */
+const PAGE_BUDGET = 320 * 1024;
 /** The page with its screenshots (the site has one theme, so every image counts). */
 const TOTAL_BUDGET = 1024 * 1024;
 

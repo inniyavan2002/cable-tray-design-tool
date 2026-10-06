@@ -5,6 +5,7 @@ import type { DrawingShape } from '../../src/drawing/sectionGeometry';
 import { APP, FILES, T2_DRAWING } from '../data';
 import { countUp } from './building/telemetry';
 import { MotionButton, useLoopRunning, useStill } from './loop';
+import { RoutePulse } from './pulse';
 import { SECTION, SectionHeading, Wrap } from './ui';
 
 const { t2, catalog, trays } = APP;
@@ -192,16 +193,11 @@ export function Features() {
 
   return (
     <section ref={section} id="features" aria-labelledby="features-title" data-flow={running ? 'on' : 'off'} className={`${SECTION} isolate overflow-hidden`}>
-      {/* The drawing sheet, drifting slowly the way the work flows. */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-        <div className="fw-grid absolute inset-y-0 -left-[140px] right-0" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_65%_at_50%_55%,transparent_35%,var(--bg)_100%)]" />
-      </div>
       <Wrap>
         <SectionHeading id="features-title" intro="Every figure on this page comes from the app's own calculation of its example project.">
           From cable list to checked report
         </SectionHeading>
-        <div className="mt-12 rounded-[14px] border border-line-2 bg-bg/60 p-3 md:p-5">
+        <div className="relative mt-12 rounded-[14px] border border-line-2 bg-bg/60 p-3 md:p-5">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-1 md:mb-5">
             <p className="font-mono text-[11.5px] tracking-[0.08em] text-ink-2 uppercase">
               Engineering workflow <span className="text-ink-3">· {tray.name} {tray.service}</span>
@@ -215,7 +211,13 @@ export function Features() {
             </div>
           </div>
           <div ref={grid} className="relative grid gap-7 md:grid-cols-2 lg:grid-cols-3">
-            <Wires grid={grid} lit={STAGES.slice(1).map((_, i) => still || run.stage > i || (run.stage === i && run.passing))} passing={!still && run.passing ? run.stage : -1} />
+            <Wires
+              grid={grid}
+              lit={STAGES.slice(1).map((_, i) => still || run.stage > i || (run.stage === i && run.passing))}
+              passing={!still && run.passing ? run.stage : -1}
+              running={running}
+              still={still}
+            />
             {STAGES.map((stage, i) => (
               <StageCard key={stage.name} stage={stage} index={i} state={stateOf(run, i, still)} start={run.starts[i]!} still={still} />
             ))}
@@ -307,28 +309,124 @@ function wire(a: Box, b: Box): Point[] {
 
 const pathOf = (points: readonly Point[]) => points.map(([x, y], i) => `${i ? 'L' : 'M'}${Math.round(x * 10) / 10} ${Math.round(y * 10) / 10}`).join('');
 
+/** Statuses beside the stages they describe, outside the panel. */
+const TAGS: Array<{ stage: number; text: string; tone: 'pass' | 'energy' }> = [
+  { stage: 0, text: 'Checked', tone: 'pass' },
+  { stage: 2, text: 'Calculating', tone: 'energy' },
+  { stage: 3, text: 'Verified', tone: 'pass' },
+  { stage: 5, text: 'Report ready', tone: 'pass' },
+];
+
+interface System {
+  wires: Point[][];
+  /** The drawing frame around the panel, and its zone ticks, where there is room. */
+  frame: Box | null;
+  /** The catalogue's rows coming in to the first stage, and the reports going out of the last. */
+  input: Point[] | null;
+  output: Point[] | null;
+  tags: Array<{ at: Point; side: 1 | -1; text: string; tone: 'pass' | 'energy' }>;
+}
+
 /**
- * The wires between the stages, laid out from where the stages are. A wire
- * lights as a stage passes its result along it, a spark running ahead; the
- * light stays until the run starts again.
+ * The wires between the stages, and around the panel the system they are
+ * part of: a drawing frame with its zone ticks, the catalogue's rows coming
+ * in to the first stage and the reports going out of the last, and faint
+ * statuses beside the stages they describe. All of it is laid out from where
+ * the stages are. A wire lights as a stage passes its result along it, a
+ * spark running ahead, and the light stays until the run starts again;
+ * slower pulses keep travelling the longer runs while the section is on
+ * screen.
  */
-function Wires({ grid, lit, passing }: { grid: RefObject<HTMLDivElement | null>; lit: boolean[]; passing: number }) {
-  const [wires, setWires] = useState<Point[][]>([]);
+function Wires({ grid, lit, passing, running, still }: { grid: RefObject<HTMLDivElement | null>; lit: boolean[]; passing: number; running: boolean; still: boolean }) {
+  const [system, setSystem] = useState<System>({ wires: [], frame: null, input: null, output: null, tags: [] });
   useEffect(() => {
     const element = grid.current;
-    if (!element) return;
+    const panel = element?.parentElement;
+    const section = element?.closest('section');
+    if (!element || !panel || !section) return;
     const measure = () => {
       const boxes = [...element.querySelectorAll<HTMLElement>(':scope > article')].map((c) => ({ left: c.offsetLeft, top: c.offsetTop, right: c.offsetLeft + c.offsetWidth, bottom: c.offsetTop + c.offsetHeight }));
-      setWires(boxes.slice(1).map((b, i) => wire(boxes[i]!, b)));
+      const wires = boxes.slice(1).map((b, i) => wire(boxes[i]!, b));
+      const [g, sr] = [element.getBoundingClientRect(), section.getBoundingClientRect()];
+      const edges = { left: sr.left - g.left, right: sr.right - g.left };
+      const box = { left: -element.offsetLeft, top: -element.offsetTop, right: panel.offsetWidth - element.offsetLeft, bottom: panel.offsetHeight - element.offsetTop };
+      const frame = { left: box.left - 16, top: box.top - 16, right: box.right + 16, bottom: box.bottom + 16 };
+      const room = Math.min(frame.left - edges.left, edges.right - frame.right);
+      // Stages side by side: the first starts a row on the left, the last ends one on the right.
+      const first = boxes[0];
+      const last = boxes[boxes.length - 1];
+      const sideBySide = !!first && !!last && last.right > first.right + 10;
+      const onLeft = (b: Box) => b.left - box.left < 40;
+      setSystem({
+        wires,
+        frame: room >= 28 ? frame : null,
+        input: sideBySide ? [[edges.left, first.top + PORT], [first.left, first.top + PORT]] : null,
+        output: sideBySide ? [[last.right, last.top + PORT], [edges.right, last.top + PORT]] : null,
+        tags:
+          sideBySide && room >= 130
+            ? TAGS.filter((t) => boxes[t.stage]).map((t) => {
+                const b = boxes[t.stage]!;
+                const side = onLeft(b) ? -1 : 1;
+                return { at: [side < 0 ? frame.left - 12 : frame.right + 12, b.top + PORT - 9], side, text: t.text, tone: t.tone };
+              })
+            : [],
+      });
     };
     const observer = new ResizeObserver(measure);
     observer.observe(element);
+    observer.observe(section);
     measure();
     return () => observer.disconnect();
   }, [grid]);
+  const { wires, frame, input, output, tags } = system;
+  // Slow pulses on the runs long enough to show them: the routes in and out, and the wires that wrap to the next row.
+  const flows = [
+    ...(input ? [{ tone: 'power' as const, points: input, seconds: 7, edges: [true, false] as const }] : []),
+    ...wires.filter((w) => w.length > 2).map((points) => ({ tone: 'power' as const, points, seconds: 6 })),
+    ...(output ? [{ tone: 'power' as const, points: output, seconds: 7, edges: [false, true] as const }] : []),
+  ];
   return (
     <>
       <svg aria-hidden="true" focusable="false" className="pointer-events-none absolute inset-0 h-full w-full overflow-visible">
+        {frame && (
+          <g className="fw-frame">
+            <rect x={frame.left} y={frame.top} width={frame.right - frame.left} height={frame.bottom - frame.top} />
+            {/* Zone ticks along the top and the left, a longer one and a letter or number every fifth. */}
+            {Array.from({ length: Math.floor((frame.right - frame.left) / 28) }, (_, i) => (
+              <path key={`x${i}`} d={`M${frame.left + 28 * (i + 1)} ${frame.top}v${i % 5 === 4 ? -7 : -4}`} />
+            ))}
+            {Array.from({ length: Math.floor((frame.bottom - frame.top) / 28) }, (_, i) => (
+              <path key={`y${i}`} d={`M${frame.left} ${frame.top + 28 * (i + 1)}h${i % 5 === 4 ? -7 : -4}`} />
+            ))}
+            {Array.from({ length: Math.floor((frame.right - frame.left) / 140) }, (_, i) => (
+              <text key={`a${i}`} x={frame.left + 140 * i + 70} y={frame.top - 8} textAnchor="middle">
+                {String.fromCharCode(65 + i)}
+              </text>
+            ))}
+            {Array.from({ length: Math.floor((frame.bottom - frame.top) / 140) }, (_, i) => (
+              <text key={`n${i}`} x={frame.left - 10} y={frame.top + 140 * i + 73} textAnchor="end">
+                {i + 1}
+              </text>
+            ))}
+          </g>
+        )}
+        {[input, output].map(
+          (route, i) =>
+            route && (
+              <g key={i}>
+                <path d={pathOf(route)} className="fw-route" />
+                {frame && <circle cx={i ? frame.right : frame.left} cy={route[0]![1]} r="2.5" className="fw-port" data-lit />}
+              </g>
+            ),
+        )}
+        {tags.map((t) => (
+          <g key={t.text} className="fw-status" data-tone={t.tone}>
+            <circle cx={t.at[0] + (t.side < 0 ? -3 : 3)} cy={t.at[1] - 3} r="2.5" />
+            <text x={t.at[0] + (t.side < 0 ? -10 : 10)} y={t.at[1]} textAnchor={t.side < 0 ? 'end' : 'start'}>
+              {t.text}
+            </text>
+          </g>
+        ))}
         {wires.map((points, i) => {
           const on = lit[i] || undefined;
           return (
@@ -341,6 +439,7 @@ function Wires({ grid, lit, passing }: { grid: RefObject<HTMLDivElement | null>;
           );
         })}
       </svg>
+      {!still && flows.map((f, i) => <RoutePulse key={`${i}-${f.points.length}`} route={f} lead={(i * 0.37) % 1} running={running} />)}
       {passing >= 0 && wires[passing] && <Spark key={passing} points={wires[passing]!} />}
     </>
   );

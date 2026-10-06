@@ -711,3 +711,22 @@ export const GEOMETRY = {
   /** Centre of the building's footprint on screen, for the ground fade. */
   centre: project([LENGTH / 2, DEPTH / 2, 0]),
 };
+
+/**
+ * The building in plan, in metres, for the showcase's floor plan: its size,
+ * storey height, columns, riser, trays, fittings and boards, as the drawing
+ * has them.
+ */
+export const PLAN = {
+  length: LENGTH,
+  depth: DEPTH,
+  storey: STOREY,
+  columns: COLUMNS,
+  riser: RISER,
+  main: MAIN,
+  branches: BRANCHES,
+  branchWidth: BRANCH_WIDTH,
+  fixtures: FIXTURES,
+  mdb: { x: MDB.x, y: MDB.y },
+  firePanel: { x: FIRE_PANEL.x, y: FIRE_PANEL.y },
+};

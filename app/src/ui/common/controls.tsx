@@ -1,14 +1,28 @@
 import { useId, useState, type ReactNode } from 'react';
 import { plain } from '../../domain/format';
 import styles from './controls.module.css';
+import { InfoTip } from './InfoTip';
 
-export function TextField(props: { label: string; value: string; onChange: (value: string) => void; placeholder?: string; maxLength?: number }) {
+/** A field's label, followed by its plain-words explanation (an InfoTip) when there is one. */
+function LabelRow({ topic, info, children }: { topic: string; info?: ReactNode; children: ReactNode }) {
+  if (!info) return children;
+  return (
+    <div className={styles.labelRow}>
+      {children}
+      <InfoTip topic={topic}>{info}</InfoTip>
+    </div>
+  );
+}
+
+export function TextField(props: { label: string; value: string; onChange: (value: string) => void; placeholder?: string; maxLength?: number; info?: ReactNode }) {
   const id = useId();
   return (
     <div className={styles.field}>
-      <label htmlFor={id} className={styles.label}>
-        {props.label}
-      </label>
+      <LabelRow topic={props.label} info={props.info}>
+        <label htmlFor={id} className={styles.label}>
+          {props.label}
+        </label>
+      </LabelRow>
       <input
         id={id}
         className={styles.input}
@@ -30,6 +44,8 @@ interface NumberFieldProps {
   /** Values below this are rejected even if min allows 0 (e.g. max fill must be above 0). */
   exclusiveMin?: boolean;
   onCommit: (value: number) => void;
+  /** Explains the setting in plain words. */
+  info?: ReactNode;
 }
 
 /**
@@ -37,7 +53,7 @@ interface NumberFieldProps {
  * valid number the last valid value stays in effect and a message says why;
  * leaving the field restores the last valid value.
  */
-export function NumberField({ label, value, unit, min, max, exclusiveMin, onCommit }: NumberFieldProps) {
+export function NumberField({ label, value, unit, min, max, exclusiveMin, onCommit, info }: NumberFieldProps) {
   const id = useId();
   const errorId = useId();
   const [text, setText] = useState(plain(value).replace(/,/g, ''));
@@ -62,9 +78,11 @@ export function NumberField({ label, value, unit, min, max, exclusiveMin, onComm
 
   return (
     <div className={styles.field}>
-      <label htmlFor={id} className={styles.label}>
-        {label}
-      </label>
+      <LabelRow topic={label} info={info}>
+        <label htmlFor={id} className={styles.label}>
+          {label}
+        </label>
+      </LabelRow>
       <div className={styles.numberWrap} data-invalid={error ? 'true' : undefined}>
         <input
           id={id}
@@ -102,11 +120,21 @@ export function SegmentedControl<T extends string | number>(props: {
   options: ReadonlyArray<{ value: T; label: string }>;
   value: T;
   onChange: (value: T) => void;
+  info?: ReactNode;
 }) {
   const name = useId();
   return (
     <fieldset className={styles.segmented}>
-      <legend className={styles.label}>{props.legend}</legend>
+      {/* The legend names the group. With an explanation, the visible label moves to a row that can hold the "i". */}
+      <legend className={props.info ? 'sr-only' : styles.label}>{props.legend}</legend>
+      {props.info && (
+        <div className={styles.labelRow}>
+          <span className={styles.label} aria-hidden="true">
+            {props.legend}
+          </span>
+          <InfoTip topic={props.legend}>{props.info}</InfoTip>
+        </div>
+      )}
       <div className={styles.segments}>
         {props.options.map((option) => (
           <label key={String(option.value)} className={styles.segment}>
@@ -125,11 +153,14 @@ export function SegmentedControl<T extends string | number>(props: {
   );
 }
 
-export function Switch(props: { label: string; checked: boolean; onChange: (checked: boolean) => void }) {
+export function Switch(props: { label: string; checked: boolean; onChange: (checked: boolean) => void; info?: ReactNode }) {
   const id = useId();
   return (
     <div className={styles.switchRow}>
-      <span id={id}>{props.label}</span>
+      <span className={styles.switchLabel}>
+        <span id={id}>{props.label}</span>
+        {props.info && <InfoTip topic={props.label}>{props.info}</InfoTip>}
+      </span>
       <button
         type="button"
         role="switch"

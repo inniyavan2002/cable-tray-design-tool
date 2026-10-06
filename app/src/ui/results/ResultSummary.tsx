@@ -8,6 +8,27 @@ import { STATUS_TEXT, traySizeText } from './status';
 
 const TRAY_TYPE: Record<Tray['settings']['trayType'], string> = { perforated: 'Perforated', ladder: 'Ladder' };
 
+/** The live result: the tray size, its status and the fill against the limit, updated on every edit. */
+export function LiveCalculation({ tray, outcome }: { tray: Tray; outcome: TrayOutcome }) {
+  return (
+    <div className={styles.console}>
+      <div className={styles.consoleHead}>
+        {/* Keyed on the size, so the signal blinks once when the result changes. */}
+        <span key={traySizeText(outcome.result)} className={styles.live}>
+          <i aria-hidden="true" />
+          Live calculation
+        </span>
+        <span className={styles.consoleTray}>
+          {tray.name}
+          {tray.service ? ` · ${tray.service}` : ''}
+        </span>
+      </div>
+      <ResultBanner tray={tray} outcome={outcome} />
+      <FillMeter outcome={outcome} />
+    </div>
+  );
+}
+
 export function ResultBanner({ tray, outcome }: { tray: Tray; outcome: TrayOutcome }) {
   const { result } = outcome;
   const status = STATUS_TEXT[result.status];
@@ -32,26 +53,28 @@ export function ResultBanner({ tray, outcome }: { tray: Tray; outcome: TrayOutco
 
 export function FillMeter({ outcome }: { outcome: TrayOutcome }) {
   const { result, rowsWithoutWeight } = outcome;
-  if (result.status === 'empty') return null;
   const limit = result.settings.maxFillPct;
   const fill = result.selected?.fill ?? null;
   const firstFit = result.tried[0];
+  const over = fill !== null && fill > limit / 100;
   return (
     <section className={styles.fill} aria-label="Fill and weight">
-      {fill !== null && (
-        <>
-          <div className={styles.fillRow}>
-            <span>
-              Fill <b>{percent(fill)}</b>
-            </span>
-            <span>limit {plain(limit)}%</span>
-          </div>
-          <div className={styles.bar} aria-hidden="true">
-            <i className={styles.barFill} data-over={fill > limit / 100 ? 'true' : undefined} style={{ '--fill': Math.min(1, fill) } as CSSProperties} />
-            <u className={styles.barLimit} style={{ left: `${Math.min(100, limit)}%` }} />
-          </div>
-        </>
-      )}
+      <div className={styles.fillRow}>
+        <span>
+          Current fill <b data-over={over ? 'true' : undefined}>{fill === null ? '–' : percent(fill)}</b>
+        </span>
+        <span>
+          Max fill <b>{plain(limit)}%</b>
+        </span>
+      </div>
+      <div className={styles.bar} aria-hidden="true">
+        {[25, 50, 75].map((tick) => (
+          <s key={tick} className={styles.tick} style={{ left: `${tick}%` }} />
+        ))}
+        <i className={styles.barFill} data-over={over ? 'true' : undefined} style={{ '--fill': fill === null ? 0 : Math.min(1, fill) } as CSSProperties} />
+        <u className={styles.barLimit} style={{ left: `${Math.min(100, limit)}%` }} />
+      </div>
+      {result.status === 'empty' && <p className={styles.note}>Fill is the cables' cross-section area against the tray's. It shows once the tray holds a cable.</p>}
       {result.status === 'pass-upsized' && firstFit && (
         <p className={styles.note}>
           {size(firstFit.widthMm, firstFit.heightMm)} gave {percent(firstFit.fill)}, so the next standard size up by area was used.
@@ -65,10 +88,12 @@ export function FillMeter({ outcome }: { outcome: TrayOutcome }) {
           The required {num1(result.requiredWidthMm)} × {num1(result.requiredHeightMm)} mm is larger than every standard size. Add larger standard sizes or split the tray. The drawing shows the required size.
         </p>
       )}
-      <p className={styles.note}>
-        Cable weight {num1(result.weightKgPerM)} kg/m
-        {rowsWithoutWeight > 0 && ` (weight unknown for ${rowsWithoutWeight} cable row${rowsWithoutWeight === 1 ? '' : 's'})`} · cable area {int(result.cableAreaMm2)} mm²
-      </p>
+      {result.status !== 'empty' && (
+        <p className={styles.note}>
+          Cable weight {num1(result.weightKgPerM)} kg/m
+          {rowsWithoutWeight > 0 && ` (weight unknown for ${rowsWithoutWeight} cable row${rowsWithoutWeight === 1 ? '' : 's'})`} · cable area {int(result.cableAreaMm2)} mm²
+        </p>
+      )}
     </section>
   );
 }

@@ -234,3 +234,17 @@
     transition: none;
   }
 }
+
+/* A label and its "i". */
+.labelRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.switchLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}

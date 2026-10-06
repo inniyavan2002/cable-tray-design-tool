@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, type ReactNode } from 'react';
 import { useProjectStore } from '../../state/projectStore';
 import { useUiStore } from '../../state/uiStore';
 import { openProjectFile, saveProjectFile, startNewProject } from '../project/projectFiles';
@@ -68,7 +68,7 @@ export function TopBar() {
             <span aria-hidden="true">↷</span>
           </button>
         </div>
-        <div className={styles.group} role="group" aria-label="Project file">
+        <ToolGroup caption="Project" label="Project file">
           <button type="button" className={styles.button} title="Start an empty project (Undo brings this one back)" onClick={startNewProject}>
             New
           </button>
@@ -78,20 +78,27 @@ export function TopBar() {
           <button type="button" className={styles.button} title="Save a project file to share or keep (Ctrl+S)" onClick={() => void saveProjectFile()}>
             Save project
           </button>
-        </div>
-        <div className={styles.group} role="group" aria-label="Catalog and standards">
-          <button type="button" className={styles.button} onClick={() => openCatalog()}>
+        </ToolGroup>
+        <ToolGroup caption="Design" label="Catalog and standards">
+          <button type="button" className={styles.button} title="Browse the cable catalogues" onClick={() => openCatalog()}>
             Catalog
           </button>
-          <button type="button" className={styles.button} onClick={() => openDialog('standards')}>
+          <button type="button" className={styles.button} title="Standard tray sizes and default settings" onClick={() => openDialog('standards')}>
             Standards
           </button>
-        </div>
-        <button type="button" className={`${styles.button} ${styles.primary}`} onClick={() => openDialog('export')}>
-          Export
-        </button>
+        </ToolGroup>
+        <ToolGroup caption="Output">
+          <button type="button" className={`${styles.button} ${styles.primary}`} title="PDF report, Excel workbook or drawings" onClick={() => openDialog('export')}>
+            <svg className={styles.exportIcon} viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+              <path d="M8 2v8M4.5 6.5 8 10l3.5-3.5M3 13h10" />
+            </svg>
+            Export
+          </button>
+        </ToolGroup>
+        <ToolGroup caption="Appearance">
+          <ThemeSwitch />
+        </ToolGroup>
       </div>
-      <ThemeSwitch />
       <input
         ref={fileInput}
         type="file"
@@ -106,6 +113,27 @@ export function TopBar() {
         }}
       />
     </header>
+  );
+}
+
+/**
+ * A captioned set of toolbar buttons. With a label, the set is a named group
+ * for assistive technology; the caption is for the eye only.
+ */
+function ToolGroup({ caption, label, children }: { caption: string; label?: string; children: ReactNode }) {
+  return (
+    <div className={styles.tool}>
+      <span className={styles.caption} aria-hidden="true">
+        {caption}
+      </span>
+      {label ? (
+        <div className={styles.group} role="group" aria-label={label}>
+          {children}
+        </div>
+      ) : (
+        <div className={styles.group}>{children}</div>
+      )}
+    </div>
   );
 }
 

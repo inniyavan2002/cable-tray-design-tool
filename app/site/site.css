@@ -648,6 +648,16 @@
 .hero-float {
   animation: hero-float 13s ease-in-out infinite alternate paused;
 }
+/* A slower scan across the sheet, at its own pace so the two never move together. */
+/* A fine line with a tight glow: a narrow band keeps it cheap to move where the browser draws without a graphics card. */
+.grid-scan-across {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 24px;
+  background: linear-gradient(90deg, transparent, rgba(62, 224, 255, 0.05) 35%, rgba(124, 190, 255, 0.16) 50%, rgba(62, 224, 255, 0.05) 65%, transparent);
+  transform: translateX(-150px);
+  animation: grid-scan-across 17s cubic-bezier(0.45, 0, 0.3, 1) 6s infinite backwards paused;
+}
 /* A faint scan passes down the drawing sheet every 8 s. */
 .grid-scan {
   position: absolute;
@@ -708,14 +718,162 @@
 .net-tag {
   opacity: 0.7;
 }
-.net-tag[data-kind='status'] text {
-  fill: var(--energy);
-  fill-opacity: 0.75;
+/* Short labels on the sheet, and its zone letters and numbers, as on a drawing's border. */
+.net .net-note {
+  font-size: 8.5px;
+  letter-spacing: 0.1em;
+  fill: var(--ink-3);
+  fill-opacity: 0.85;
+}
+.net .net-zone {
+  font-size: 8.5px;
+  letter-spacing: 0.1em;
+  fill: var(--ink-3);
+  fill-opacity: 0.45;
+}
+/* The main board as a single-line diagram: thin blueprint lines, the busbar a little heavier. */
+.net-feeder,
+.net-breaker,
+.net-board {
+  fill: none;
+  stroke: var(--energy);
+  stroke-opacity: 0.3;
+}
+.net-breaker,
+.net-board {
+  fill: var(--bg);
+}
+.net-busbar {
+  fill: none;
+  stroke: var(--energy);
+  stroke-opacity: 0.45;
+  stroke-width: 3;
+}
+.net-transformer {
+  fill: var(--bg);
+  stroke: var(--accent-ink);
+  stroke-opacity: 0.45;
+}
+/*
+ * The live tray analysis beside the drawing and the status strip under the
+ * text: readouts on the sheet, not cards. They drift and update by opacity
+ * and transform alone.
+ */
+.net-analysis {
+  padding-left: 12px;
+  border-left: 1px solid rgba(124, 176, 255, 0.22);
+  font: 10px/1.35 var(--mono);
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+  animation: net-drift 9s ease-in-out infinite alternate paused;
+}
+.net-analysis-title {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.net-tray {
+  transition: color 400ms var(--ease);
+}
+.net-tray[data-active] {
+  color: var(--ink);
+}
+.net-tray[data-active] .net-tray-name {
+  color: var(--energy);
+}
+.net-meter {
+  position: relative;
+  height: 3px;
+  margin-top: 4px;
+  border-radius: 2px;
+  background: rgba(124, 176, 255, 0.14);
+}
+.net-meter-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 2px;
+  background: var(--accent-ink);
+  opacity: 0.55;
+  transform-origin: left center;
+}
+.net-tray[data-active] .net-meter-fill {
+  background: var(--pass);
+  opacity: 0.9;
+  animation: net-measure 900ms var(--ease);
+}
+/* The fill limit across every tray. */
+.net-meter-limit {
+  position: absolute;
+  top: -2px;
+  width: 1px;
+  height: 7px;
+  background: var(--warn);
+  opacity: 0.8;
+}
+.net-analysis-figures {
+  border-top: 1px solid rgba(124, 176, 255, 0.14);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 9.5px;
+}
+.net-analysis-figures dd {
+  color: var(--ink-2);
+}
+.net-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  animation: b-led 1.5s ease-in-out infinite alternate paused;
+}
+.net-strip {
+  font: 10px var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ink-3);
+}
+.net-strip li {
+  transition:
+    color 300ms var(--ease),
+    opacity 300ms var(--ease);
+}
+.net-strip li[data-state='next'] {
+  opacity: 0.5;
+}
+.net-strip li[data-state='active'] {
+  color: var(--energy);
+}
+.net-strip li[data-state='active']:last-child {
+  color: var(--pass);
+}
+.net-strip-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--line-3);
+}
+.net-strip li[data-state='done'] .net-strip-dot {
+  background: var(--accent-ink);
+}
+/* The stage running: its light glows and pulses. */
+.net-strip li[data-state='active'] .net-strip-dot {
+  background: currentColor;
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, currentColor 22%, transparent),
+    0 0 10px currentColor;
+  animation: b-led 0.9s ease-in-out infinite alternate paused;
+}
+.net-strip-arrow {
+  color: var(--line-3);
+}
+.net-strip li[data-state='done'] .net-strip-arrow,
+.net-strip li[data-state='active'] .net-strip-arrow {
+  color: var(--accent-ink);
 }
 /* What moves on the network: HTML marks animated by transform and opacity alone, so nothing is repainted (Network.tsx). */
 .net-pulse,
-.net-ring,
-.net-led {
+.net-ring {
   position: absolute;
   pointer-events: none;
 }
@@ -768,14 +926,6 @@
 .net-ring[data-tone='fire'] {
   border-color: var(--fail);
 }
-.net-led {
-  margin: -2px 0 0 -2px;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--energy);
-  animation: b-led 1.5s ease-in-out infinite alternate paused;
-}
 .net-leader {
   fill: none;
   stroke: var(--ink-3);
@@ -812,21 +962,184 @@
   animation: live-dot 1.8s ease-in-out infinite paused;
 }
 /*
- * The features' workflow (Features.tsx): the drawing sheet drifts slowly
- * the way the work flows, by transform alone; the stage running is lit; a
- * stage's hover reveals a little more of its working; and the wires light
- * as each stage passes its result on.
+ * The drawing sheet below the hero (sheet/PageSheet.tsx): the grid at three
+ * scales, as on an engineering drawing, centred on the page; fainter than the
+ * hero's, and hidden behind every card. The fragments in the margins follow
+ * the mouse a little, each at its own depth (--depth), by transform alone.
  */
-.fw-grid {
+.page-grid {
   background-image:
-    linear-gradient(var(--grid-major) 1px, transparent 1px), linear-gradient(90deg, var(--grid-major) 1px, transparent 1px),
-    linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    linear-gradient(rgba(124, 176, 255, 0.075) 1px, transparent 1px), linear-gradient(90deg, rgba(124, 176, 255, 0.075) 1px, transparent 1px),
+    linear-gradient(rgba(124, 176, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(124, 176, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(rgba(124, 176, 255, 0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(124, 176, 255, 0.025) 1px, transparent 1px);
   background-size:
+    700px 700px,
+    700px 700px,
     140px 140px,
     140px 140px,
     28px 28px,
     28px 28px;
-  animation: fw-drift 40s linear infinite paused;
+  background-position: 50% 0;
+}
+.sheet-fragment,
+.floor-plan {
+  --shift-x: calc(var(--sheet-x, 0) * var(--depth, 8) * -1px);
+  --shift-y: calc(var(--sheet-y, 0) * var(--depth, 8) * -0.8px);
+  transform: translate3d(var(--shift-x), var(--shift-y), 0);
+  transition: transform 900ms var(--ease);
+}
+.floor-plan {
+  --depth: 10;
+  transform: translate3d(calc(-50% + var(--shift-x)), calc(-50% + var(--shift-y)), 0);
+}
+.sheet-fragment svg {
+  font: 9px var(--mono);
+  letter-spacing: 0.1em;
+}
+.sheet-line,
+.sheet-axis,
+.sheet-rung,
+.sheet-tray,
+.sheet-cable,
+.sheet-bubble,
+.sheet-column,
+.sheet-level {
+  fill: none;
+  stroke: rgba(124, 176, 255, 0.17);
+}
+.sheet-axis {
+  stroke: rgba(124, 176, 255, 0.12);
+  stroke-dasharray: 10 3 2 3;
+}
+.sheet-rung {
+  stroke: rgba(62, 224, 255, 0.08);
+}
+.sheet-tray {
+  stroke: rgba(62, 224, 255, 0.22);
+}
+.sheet-cable {
+  stroke: rgba(124, 176, 255, 0.2);
+}
+.sheet-bubble {
+  fill: var(--bg);
+}
+.sheet-column,
+.sheet-level {
+  fill: rgba(124, 176, 255, 0.1);
+}
+.sheet-node {
+  fill: var(--energy);
+  opacity: 0.4;
+}
+.sheet-text {
+  fill: var(--ink-3);
+  fill-opacity: 0.55;
+}
+/*
+ * Behind the showcase, a floor of the drawing's building in plan
+ * (sheet/FloorPlan.tsx): mostly monochrome, the trays alone in cyan. Its
+ * lines keep a hairline width at any size.
+ */
+.floor-plan :is(path, rect, circle) {
+  vector-effect: non-scaling-stroke;
+  stroke-width: 1;
+}
+.plan-axis,
+.plan-thin,
+.plan-wall,
+.plan-bubble,
+.plan-column,
+.plan-board,
+.plan-fitting,
+.plan-tray,
+.plan-tray-axis {
+  fill: none;
+}
+.plan-axis {
+  stroke: rgba(124, 176, 255, 0.1);
+  stroke-dasharray: 12 4 2 4;
+}
+.plan-thin {
+  stroke: rgba(124, 176, 255, 0.12);
+}
+.plan-wall {
+  stroke: rgba(124, 176, 255, 0.22);
+}
+.plan-bubble {
+  fill: var(--bg-2);
+  stroke: rgba(124, 176, 255, 0.2);
+}
+.plan-column {
+  fill: rgba(124, 176, 255, 0.08);
+  stroke: rgba(124, 176, 255, 0.18);
+}
+.plan-board {
+  fill: rgba(61, 139, 255, 0.12);
+  stroke: rgba(124, 176, 255, 0.3);
+}
+.plan-fire {
+  fill: none;
+  stroke: rgba(255, 143, 133, 0.35);
+}
+.plan-fitting {
+  stroke: rgba(124, 176, 255, 0.14);
+}
+.plan-tray {
+  stroke: rgba(62, 224, 255, 0.3);
+}
+.plan-tray-axis {
+  stroke: rgba(62, 224, 255, 0.14);
+  stroke-dasharray: 6 4;
+}
+.plan-node {
+  fill: var(--energy);
+  opacity: 0.45;
+}
+.plan-text {
+  font: 13px var(--mono);
+  letter-spacing: 0.1em;
+  fill: var(--ink-3);
+  fill-opacity: 0.6;
+}
+.plan-text .plan-text-small {
+  font-size: 11px;
+  fill: var(--energy);
+  fill-opacity: 0.45;
+}
+/*
+ * The features' workflow (Features.tsx): the stage running is lit; a stage's
+ * hover reveals a little more of its working; the wires light as each stage
+ * passes its result on; and around the panel, a drawing frame, the routes in
+ * and out, and the stages' statuses, all faint.
+ */
+.fw-frame {
+  fill: none;
+  stroke: rgba(124, 176, 255, 0.16);
+}
+.fw-frame text {
+  font: 8.5px var(--mono);
+  letter-spacing: 0.1em;
+  fill: var(--ink-3);
+  fill-opacity: 0.5;
+  stroke: none;
+}
+.fw-route {
+  fill: none;
+  stroke: rgba(62, 224, 255, 0.2);
+}
+.fw-status {
+  font: 9px var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  fill: var(--ink-3);
+  fill-opacity: 0.7;
+}
+.fw-status circle {
+  fill: var(--pass);
+  opacity: 0.55;
+}
+.fw-status[data-tone='energy'] circle {
+  fill: var(--energy);
 }
 .fw-led {
   animation: b-led 1.2s ease-in-out infinite alternate paused;
@@ -912,8 +1225,10 @@
 [data-flow='on'] .b-glow,
 [data-flow='on'] .hero-orbit,
 [data-flow='on'] .net-ring,
-[data-flow='on'] .net-led,
-[data-flow='on'] .fw-grid,
+[data-flow='on'] .net-dot,
+[data-flow='on'] .net-strip-dot,
+[data-flow='on'] .net-analysis,
+[data-flow='on'] .grid-scan-across,
 [data-flow='on'] .fw-led,
 [data-flow='on'] .hero-float,
 [data-flow='on'] .grid-scan,
@@ -1068,11 +1383,6 @@
     transform: scaleX(1);
   }
 }
-@keyframes fw-drift {
-  to {
-    transform: translateX(140px);
-  }
-}
 @keyframes net-ring {
   0% {
     transform: scale(1);
@@ -1119,6 +1429,28 @@
   }
   to {
     transform: perspective(1600px) translateY(-5px) rotateX(-0.7deg);
+  }
+}
+@keyframes grid-scan-across {
+  0% {
+    transform: translateX(-150px);
+  }
+  45%,
+  100% {
+    transform: translateX(calc(100vw + 20px));
+  }
+}
+@keyframes net-drift {
+  from {
+    transform: translateY(-3px);
+  }
+  to {
+    transform: translateY(3px);
+  }
+}
+@keyframes net-measure {
+  from {
+    transform: scaleX(0);
   }
 }
 @keyframes grid-scan {
@@ -1197,7 +1529,8 @@
   .hero-float {
     animation: none;
   }
-  .grid-scan {
+  .grid-scan,
+  .grid-scan-across {
     display: none;
   }
   .b-particle:nth-child(n + 7) {
@@ -1233,8 +1566,11 @@
     .hero-orbit,
     .hero-float,
     .net-ring,
-    .net-led,
-    .fw-grid,
+    .net-dot,
+    .net-strip-dot,
+    .net-analysis,
+    .net-meter-fill,
+    .grid-scan-across,
     .fw-led,
     .grid-scan,
     .live-dot,
@@ -1244,7 +1580,7 @@
 :root[data-motion='off'] .lightbox[open]::backdrop {
   animation: none;
 }
-:root[data-motion='off'] :is(.btn-sweep, .wf-pulse, .b-riser, .grid-scan) {
+:root[data-motion='off'] :is(.btn-sweep, .wf-pulse, .b-riser, .grid-scan, .grid-scan-across) {
   display: none;
 }
 :root[data-motion='off'] :is(.bldg [data-sys], .b-target, .b-leader, .b-label-box, .b-spec, .fw-viz > svg, .fw-hover, .fw-wire-lit) {

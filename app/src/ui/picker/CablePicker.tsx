@@ -4,6 +4,7 @@ import { FACETS, searchCatalog, type Facet, type Filters } from '../../data/cata
 import { int, num1 } from '../../domain/format';
 import { MAX_QUANTITY, type NewTrayCable } from '../../state/projectModel';
 import { catalogTitle } from '../../state/trayResult';
+import type { PickerTab } from '../../state/uiStore';
 import { QuantityStepper } from '../common/controls';
 import { Dialog } from '../common/Dialog';
 import styles from './CablePicker.module.css';
@@ -14,12 +15,33 @@ const MAX_ROWS = 200;
 interface CablePickerProps {
   open: boolean;
   trayName: string;
+  /** The tab to show when the dialog opens; null keeps the last one used. */
+  tab?: PickerTab | null;
   onClose: () => void;
   onAdd: (cable: NewTrayCable) => void;
 }
 
-export function CablePicker({ open, trayName, onClose, onAdd }: CablePickerProps) {
-  const [tab, setTab] = useState<'catalog' | 'manual'>('catalog');
+/** Adds a cable and says what was added: "2 × Doha · 4C 240 mm²". */
+type AddCable = (cable: NewTrayCable, description: string) => void;
+
+export function CablePicker({ open, trayName, tab: requestedTab = null, onClose, onAdd }: CablePickerProps) {
+  const [tab, setTab] = useState<PickerTab>('catalog');
+  // Keeps the dialog open after each add, for entering several cables in a row.
+  const [keepOpen, setKeepOpen] = useState(false);
+  const [added, setAdded] = useState<string[]>([]);
+  const keepId = useId();
+  const [wasOpen, setWasOpen] = useState(open);
+  if (open !== wasOpen) {
+    setWasOpen(open);
+    setAdded([]);
+    if (open && requestedTab) setTab(requestedTab);
+  }
+  const add: AddCable = (cable, description) => {
+    onAdd(cable);
+    if (keepOpen) setAdded((list) => [...list, description]);
+    else onClose();
+  };
+
   return (
     <Dialog open={open} title={`Add cable to ${trayName}`} onClose={onClose} size="wide">
       {open && (
@@ -32,28 +54,27 @@ export function CablePicker({ open, trayName, onClose, onAdd }: CablePickerProps
               Manual cable
             </button>
           </div>
-          {tab === 'catalog' ? (
-            <CatalogTab
-              onAdd={(cable) => {
-                onAdd(cable);
-                onClose();
-              }}
-            />
-          ) : (
-            <ManualTab
-              onAdd={(cable) => {
-                onAdd(cable);
-                onClose();
-              }}
-            />
-          )}
+          {tab === 'catalog' ? <CatalogTab onAdd={add} /> : <ManualTab onAdd={add} />}
+          <div className={styles.keep}>
+            <label htmlFor={keepId} className={styles.keepLabel}>
+              <input id={keepId} type="checkbox" checked={keepOpen} onChange={(e) => setKeepOpen(e.target.checked)} />
+              Keep this window open to add more cables
+            </label>
+            <p className={styles.added} aria-live="polite">
+              {added.length > 0 && (
+                <>
+                  <b>Added to {trayName}:</b> {added.join(' · ')}
+                </>
+              )}
+            </p>
+          </div>
         </div>
       )}
     </Dialog>
   );
 }
 
-function CatalogTab({ onAdd }: { onAdd: (cable: NewTrayCable) => void }) {
+function CatalogTab({ onAdd }: { onAdd: AddCable }) {
   const catalog = loadCatalog();
   const searchId = useId();
   const [query, setQuery] = useState('');
@@ -147,7 +168,13 @@ function CatalogTab({ onAdd }: { onAdd: (cable: NewTrayCable) => void }) {
           type="button"
           className={styles.primary}
           disabled={!selected}
-          onClick={() => selected && onAdd({ kind: 'catalog', catalogId: selected.id, quantity })}
+          onClick={() => {
+            if (!selected) return;
+            onAdd({ kind: 'catalog', catalogId: selected.id, quantity }, `${quantity} × ${catalogTitle(selected)}`);
+            // Ready for the next cable when the dialog stays open; the search stays, for cables of the same family.
+            setSelectedId(null);
+            setQuantity(1);
+          }}
         >
           Add {quantity} cable{quantity === 1 ? '' : 's'}
         </button>
@@ -156,7 +183,7 @@ function CatalogTab({ onAdd }: { onAdd: (cable: NewTrayCable) => void }) {
   );
 }
 
-function ManualTab({ onAdd }: { onAdd: (cable: NewTrayCable) => void }) {
+function ManualTab({ onAdd }: { onAdd: AddCable }) {
   const labelId = useId();
   const odId = useId();
   const weightId = useId();
@@ -176,13 +203,12 @@ function ManualTab({ onAdd }: { onAdd: (cable: NewTrayCable) => void }) {
       onSubmit={(e) => {
         e.preventDefault();
         if (!canAdd) return;
-        onAdd({
-          kind: 'manual',
-          label: label.trim() || 'Manual cable',
-          odMm: odValue,
-          weightKgPerKm: weight.trim() ? weightValue : null,
-          quantity,
-        });
+        const name = label.trim() || 'Manual cable';
+        onAdd({ kind: 'manual', label: name, odMm: odValue, weightKgPerKm: weight.trim() ? weightValue : null, quantity }, `${quantity} × ${name} (Ø ${num1(odValue)} mm)`);
+        setLabel('');
+        setOd('');
+        setWeight('');
+        setQuantity(1);
       }}
     >
       <p className={styles.muted}>For cables that are not in the catalog. Manual cables are marked "Manual" in results and reports.</p>

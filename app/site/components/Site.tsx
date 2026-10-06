@@ -7,6 +7,7 @@ import { Hero } from './Hero';
 import { useStill } from './loop';
 import { Metrics } from './Metrics';
 import { Screens } from './Screens';
+import { PageSheet } from './sheet/PageSheet';
 import { Showcase } from './Showcase';
 import { Workflow } from './Workflow';
 
@@ -22,8 +23,10 @@ export function Site() {
         Skip to content
       </a>
       <Header />
-      <main id="main" tabIndex={-1} className="focus:outline-none">
+      <main id="main" tabIndex={-1} className="relative isolate focus:outline-none">
         <Hero key={`hero-${drawn}`} />
+        {/* Below the hero, the page sits on one drawing sheet. The sections stay the main's own children: the header follows them there. */}
+        <PageSheet />
         <Metrics />
         <Features key={`features-${drawn}`} />
         <Showcase />

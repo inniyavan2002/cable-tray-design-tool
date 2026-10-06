@@ -47,6 +47,24 @@
   --req-line: #9a6a00;
   --grid-line: rgba(27, 42, 56, 0.06);
 
+  /*
+   * Workspace accents. The live calculation reads like an instrument: a dark
+   * console in both themes, with one cyan "live" signal. Orange stays the
+   * accent for actions and the current step.
+   */
+  --grid-major: rgba(27, 42, 56, 0.11);
+  --live: #0e7d8c;
+  --console: #18242f;
+  --console-2: #213140;
+  --console-ink: #eef1ec;
+  --console-ink-2: #a9b7c1;
+  --console-line: #31424f;
+  --console-live: #5fd0dc;
+  --console-pass: #7fd3a1;
+  --console-warn: #ecc26b;
+  --action: #8f4e14;
+  --action-ink: #ffffff;
+
   --shadow-1: 0 1px 2px rgba(27, 42, 56, 0.06), 0 8px 24px rgba(27, 42, 56, 0.08);
 
   --sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
@@ -104,6 +122,19 @@
     --req-line: #e6ba62;
     --grid-line: rgba(236, 233, 225, 0.05);
 
+    --grid-major: rgba(236, 233, 225, 0.09);
+    --live: #5fc6d2;
+    --console: #0e1316;
+    --console-2: #182025;
+    --console-ink: #ece9e1;
+    --console-ink-2: #9eabb4;
+    --console-line: #2a343b;
+    --console-live: #5fd0dc;
+    --console-pass: #7acb9b;
+    --console-warn: #e6ba62;
+    --action: #de9152;
+    --action-ink: #14191d;
+
     --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.35), 0 8px 24px rgba(0, 0, 0, 0.4);
   }
 }
@@ -148,6 +179,19 @@
   --hatch: #6a757d;
   --req-line: #e6ba62;
   --grid-line: rgba(236, 233, 225, 0.05);
+
+  --grid-major: rgba(236, 233, 225, 0.09);
+  --live: #5fc6d2;
+  --console: #0e1316;
+  --console-2: #182025;
+  --console-ink: #ece9e1;
+  --console-ink-2: #9eabb4;
+  --console-line: #2a343b;
+  --console-live: #5fd0dc;
+  --console-pass: #7acb9b;
+  --console-warn: #e6ba62;
+  --action: #de9152;
+  --action-ink: #14191d;
 
   --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.35), 0 8px 24px rgba(0, 0, 0, 0.4);
 }

@@ -26,7 +26,7 @@ const FORMULAS: Array<{ note: string; name?: string; expr: string }> = [
 export function Method() {
   const reduce = useStill();
   return (
-    <section id="method" aria-labelledby="method-title" className={`${SECTION} border-y border-line bg-bg-2`}>
+    <section id="method" aria-labelledby="method-title" className={`${SECTION} border-y border-line bg-bg-2/75`}>
       <Wrap>
         <SectionHeading id="method-title" intro="The same rules run on screen and in every report, so a checker can follow the size from the cables to the tray.">
           How it sizes a tray
@@ -217,7 +217,7 @@ export function Download() {
   const list = useRef<HTMLUListElement>(null);
   const listInView = useInView(list, { once: true, amount: 0.5 });
   return (
-    <section id="download" aria-labelledby="download-title" className={`${SECTION} border-y border-line bg-bg-2`}>
+    <section id="download" aria-labelledby="download-title" className={`${SECTION} border-y border-line bg-bg-2/75`}>
       <Wrap className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
         <Reveal className="relative grid gap-5 overflow-hidden rounded-2xl border border-accent/40 bg-surface px-7 py-8 max-md:px-5">
           <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(80%_90%_at_100%_0%,rgba(37,99,235,0.22),transparent_60%)]" />
